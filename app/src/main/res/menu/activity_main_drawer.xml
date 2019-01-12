@@ -7,31 +7,31 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_most_popular"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_local_movies_black_24"
             android:title="@string/menu_most_popular" />
         <item
             android:id="@+id/nav_top_rated"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/baseline_star_rate_black_24"
             android:title="@string/menu_top_rated" />
         <item
             android:id="@+id/nav_now_playing"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/baseline_play_arrow_black_24"
             android:title="@string/menu_now_playing" />
         <item
             android:id="@+id/nav_upcoming"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/baseline_access_time_black_24"
             android:title="@string/menu_upcoming" />
         <item
             android:id="@+id/nav_favorites"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/baseline_favorite_black_24"
             android:title="@string/menu_favorites" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="More">
         <menu>
             <item
                 android:id="@+id/nav_exit"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/baseline_exit_to_app_black_24"
                 android:title="@string/menu_exit" />
         </menu>
     </item>

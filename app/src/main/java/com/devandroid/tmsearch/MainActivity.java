@@ -1,6 +1,7 @@
 package com.devandroid.tmsearch;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -41,33 +42,33 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         switch (id) {
 
             case R.id.nav_most_popular:
-                mTvTextView.setText("Most Popular");
+                mToolbar.setTitle("Most Popular");
                 break;
 
             case R.id.nav_top_rated:
-                mTvTextView.setText("Top Rated");
+                mToolbar.setTitle("Top Rated");
                 break;
 
             case R.id.nav_now_playing:
-                mTvTextView.setText("Now Playing");
+                mToolbar.setTitle("Now Playing");
                 break;
 
             case R.id.nav_upcoming:
-                mTvTextView.setText("Upcoming");
+                mToolbar.setTitle("Upcoming");
                 break;
 
             case R.id.nav_favorites:
-                mTvTextView.setText("Favorites");
+                mToolbar.setTitle("Favorites");
                 break;
 
             case R.id.nav_exit:
-                mTvTextView.setText("Exit");
+                mToolbar.setTitle("Exit");
                 break;
 
             default:
