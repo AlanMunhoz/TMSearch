@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
+
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#d81b60</color>
+
+    <!--Drawer menu colors-->
+    <color name="colorToolbarIcon">#ffffff</color>
+    <color name="colorToolbarText">#ffffff</color>
+    <color name="colorDrawerIcon">#505050</color>
+    <color name="colorDrawerText">#808080</color>
+    <color name="colorDrawerBackground">#ffffff</color>
+    <color name="colorDrawerSelected">#d0d0d0</color>
+    <color name="colorHeaderNameText">#ffffff</color>
+    <color name="colorHeaderEmailText">#ffffff</color>
+
 </resources>
