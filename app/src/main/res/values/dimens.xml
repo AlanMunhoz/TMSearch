@@ -1,6 +1,18 @@
 <resources>
+
+    <!--Navigation view-->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">164dp</dimen>
+
+    <!--Login Screen-->
+    <dimen name="login_margin_guideline_left">32dp</dimen>
+    <dimen name="login_margin_guideline_right">32dp</dimen>
+
+    <!--Elevations-->
+    <dimen name="elevation_card_view">2dp</dimen>
+    <dimen name="elevation_fab">6dp</dimen>
+    <dimen name="elevation_app_bar">4dp</dimen>
+
 </resources>

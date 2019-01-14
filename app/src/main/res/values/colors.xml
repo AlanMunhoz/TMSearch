@@ -16,4 +16,9 @@
     <color name="colorHeaderNameText">#ffffff</color>
     <color name="colorHeaderEmailText">#ffffff</color>
 
+    <!--Login Screen-->
+    <color name="colorEditText">#eaf2f3</color>
+    <color name="colorTextColorButton">#ffffff</color>
+    <color name="colorViewBackground">#ffffff</color>
+
 </resources>

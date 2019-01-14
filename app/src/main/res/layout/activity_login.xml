@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loginRelativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorViewBackground"
+    android:orientation="vertical">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        map:layout_constraintGuide_begin="@dimen/login_margin_guideline_left" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        map:layout_constraintGuide_end="@dimen/login_margin_guideline_right" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/tmsearch_logo"
+        map:layout_constraintEnd_toStartOf="@+id/guideline_right"
+        map:layout_constraintStart_toStartOf="@+id/guideline_left"
+        map:layout_constraintTop_toTopOf="parent" />
+        <!--map:srcCompat="@drawable/logo" />-->
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        map:layout_constraintBottom_toTopOf="@+id/textInputLayout3"
+        map:layout_constraintEnd_toStartOf="@+id/guideline_right"
+        map:layout_constraintStart_toStartOf="@+id/guideline_left">
+
+        <EditText
+            android:id="@+id/etEmailFieldInput"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/colorEditText"
+            android:hint="@string/ActivityLogin_editTextEmail"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        map:layout_constraintBottom_toTopOf="@+id/textInputLayout2"
+        map:layout_constraintEnd_toStartOf="@+id/guideline_right"
+        map:layout_constraintStart_toStartOf="@+id/guideline_left">
+
+        <EditText
+            android:id="@+id/etPasswordFieldInput"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/colorEditText"
+            android:hint="@string/ActivityLogin_editTextPassword"
+            android:inputType="textPassword"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        map:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        map:layout_constraintEnd_toStartOf="@+id/guideline_right"
+        map:layout_constraintStart_toStartOf="@+id/guideline_left">
+
+        <EditText
+            android:id="@+id/etTmdbKeyFieldInput"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/colorEditText"
+            android:hint="@string/ActivityLogin_editTextTmdbKey"
+            android:inputType="textVisiblePassword"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/ActivityLogin_buttonLogin"
+        android:textAllCaps="false"
+        android:textColor="@color/colorTextColorButton"
+        map:layout_constraintBottom_toBottomOf="parent"
+        map:layout_constraintEnd_toStartOf="@+id/guideline_right"
+        map:layout_constraintStart_toStartOf="@+id/guideline_left" />
+
+
+</android.support.constraint.ConstraintLayout>
