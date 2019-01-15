@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,14 +56,15 @@ public class DetailActivity extends AppCompatActivity
     private Movie mMovie;
     private ArrayList<Video> mLstVideos;
     private ReviewsRequest mReviewRequest;
-    private String mSearchUrl;
-    private Menu mFavoriteMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        /**
+         * Getting UI references
+         */
         mIvBackgroundPath = findViewById(R.id.ivImageMovie);
         ivPosterPath = findViewById(R.id.ivPosterPath);
         tvTitle = findViewById(R.id.tvTitle);
@@ -76,11 +76,21 @@ public class DetailActivity extends AppCompatActivity
         tvReviews = findViewById(R.id.tvReviews);
         mRvVideos = findViewById(R.id.rvVideos);
 
+        /**
+         * Create retrofit and set listener to
+         */
+        mRetrofitClient = new RetrofitClient(this);
 
+        /**
+         * Setup recycler view, layout manager
+         */
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRvVideos.setLayoutManager(layoutManager);
         mRvVideos.setHasFixedSize(true);
 
+        /**
+         * Setup video list adapter
+         */
         mAdapter = new VideoAdapter(DetailActivity.this);
         mRvVideos.setAdapter(mAdapter);
 
@@ -90,45 +100,45 @@ public class DetailActivity extends AppCompatActivity
         Intent intent = getIntent();
         if(intent.hasExtra(MainActivity.EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE)) {
             Bundle data = intent.getExtras();
-            Movie movie = null;
             if(data != null) {
-                movie = Parcels.unwrap(getIntent().getParcelableExtra(MainActivity.EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE));
+                mMovie = Parcels.unwrap(getIntent().getParcelableExtra(MainActivity.EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE));
             }
-            if(movie != null) {
+            if(mMovie != null) {
 
-                mMovie = movie;
-
-                tvTitle.setText(movie.getmStrTitle());
-                Picasso.with(this).load(Network.URL_POSTER_SIZE_780PX(movie.getmStrPosterPath())).into(ivPosterPath);
-                tvOverview.setText(movie.getmStrOverview());
-                tvVoteAverage.setText(movie.getmStrVoteAverage());
-                tvReleaseDate.setText(movie.getmStrReleaseDate());
-                tvVoteCount.setText(movie.getmStrVoteCount());
-                tvPopularity.setText(movie.getmStrPopularity());
+                tvTitle.setText(mMovie.getmStrTitle());
+                Picasso.with(this).load(Network.URL_POSTER_SIZE_780PX(mMovie.getmStrBackdropPath())).into(mIvBackgroundPath);
+                Picasso.with(this).load(Network.URL_POSTER_SIZE_780PX(mMovie.getmStrPosterPath())).into(ivPosterPath);
+                tvOverview.setText(mMovie.getmStrOverview());
+                tvVoteAverage.setText(mMovie.getmStrVoteAverage());
+                tvReleaseDate.setText(mMovie.getmStrReleaseDate());
+                tvVoteCount.setText(mMovie.getmStrVoteCount());
+                tvPopularity.setText(mMovie.getmStrPopularity());
 
                 /**
-                 * do the first request to populate recycler view
+                 * do the first request to populate video list
                  */
-                mRetrofitClient = new RetrofitClient(this);
                 mRetrofitClient.getVideosRequest(mMovie.mStrId);
                 mRetrofitClient.getReviewsRequest(mMovie.mStrId);
 
             }
         }
 
-        setBackgroundImage();
-
-        final Toolbar toolbar = findViewById(R.id.MyToolbar);
+        /**
+         * Setup Toolbar and Collapsing toolbar
+         */
+        final Toolbar toolbar = findViewById(R.id.Toolbar);
         toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_white_24);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapse_toolbar);
         collapsingToolbarLayout.setTitle(mMovie.getmStrTitle());
 
+        /**
+         * Configuring colors of toolbar
+         */
         collapsingToolbarLayout.setExpandedTitleColor(getColor(R.color.clLightTextColor));
         collapsingToolbarLayout.setCollapsedTitleTextColor(getColor(R.color.clLightTextColor));
         collapsingToolbarLayout.setContentScrimColor(getColor(R.color.clSelectedBackground));
-
 
     }
 
@@ -147,7 +157,7 @@ public class DetailActivity extends AppCompatActivity
     @Override
     public void onListItemClick(int clickedItemIndex) {
 
-        String videoUrl = mLstVideos.get(clickedItemIndex).getYoutubeVideoUrl();
+        String videoUrl = Network.YOUTUBE_VIDEO_URL(mLstVideos.get(clickedItemIndex).getKey());
         Intent target = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl));
         Intent chooser = Intent.createChooser(target, "Open With");
         if (chooser.resolveActivity(getPackageManager()) != null) {
@@ -180,42 +190,29 @@ public class DetailActivity extends AppCompatActivity
 
     }
 
-    public void setBackgroundImage() {
-
-        Picasso.with(this).load(Network.URL_POSTER_SIZE_780PX(mMovie.getmStrBackdropPath())).into(mIvBackgroundPath);
-    }
-
     private void showVideosList() {
 
-        try {
-            if(mLstVideos!=null) {
-                mRvVideos.setVisibility(RecyclerView.VISIBLE);
-                mAdapter.setListAdapter(mLstVideos);
-            } else {
-                mRvVideos.setVisibility(RecyclerView.GONE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(mLstVideos!=null) {
+            mRvVideos.setVisibility(RecyclerView.VISIBLE);
+            mAdapter.setListAdapter(mLstVideos);
+        } else {
+            mRvVideos.setVisibility(RecyclerView.GONE);
         }
     }
 
     private void showReviewsList() {
 
-        try {
-            String strText = "";
-            for(int i=0; i<mReviewRequest.getSize(); i++) {
-                strText += "[" + mReviewRequest.getItem(i).getmAuthor() + "]" + "\n";
-                strText += mReviewRequest.getItem(i).getmContent() + "\n";
-                strText += mReviewRequest.getItem(i).getmUrl() + "\n";
-                strText += "\n\n";
-            }
-            if(mReviewRequest.getSize()==0){
-                tvReviews.setText(getString(R.string.no_reviews));
-            } else {
-                tvReviews.setText(strText);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String strText = "";
+        for(int i=0; i<mReviewRequest.getSize(); i++) {
+            strText += "[" + mReviewRequest.getItem(i).getmAuthor() + "]" + "\n";
+            strText += mReviewRequest.getItem(i).getmContent() + "\n";
+            strText += mReviewRequest.getItem(i).getmUrl() + "\n";
+            strText += "\n\n";
+        }
+        if(mReviewRequest.getSize()==0){
+            tvReviews.setText(getString(R.string.no_reviews));
+        } else {
+            tvReviews.setText(strText);
         }
     }
 

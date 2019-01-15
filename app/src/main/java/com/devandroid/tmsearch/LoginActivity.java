@@ -12,10 +12,18 @@ import com.devandroid.tmsearch.Preferences.Preferences;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button mBtnLogin;
+    /**
+     * Constants
+     */
+    private static final String LOG_TAG = LoginActivity.class.getSimpleName();
+
+    /**
+     * UI components
+     */
     private EditText mEtEmailFieldInput;
     private EditText mEtPasswordFieldInput;
     private EditText mEtTmdbApiKeyFieldInput;
+    private Button mBtnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

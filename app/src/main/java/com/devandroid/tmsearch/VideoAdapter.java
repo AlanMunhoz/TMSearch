@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 
 import com.devandroid.tmsearch.Model.Video;
+import com.devandroid.tmsearch.Network.Network;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         void bind(int listIndex) {
             //tvName.setText(mVideo.get(listIndex).getName());
-            Picasso.with(mContext).load(mVideo.get(listIndex).getYoutubeImageUrl()).into(ivFigure);
+            Picasso.with(mContext).load(Network.YOUTUBE_IMAGE_URL(mVideo.get(listIndex).getKey())).into(ivFigure);
         }
 
         @Override

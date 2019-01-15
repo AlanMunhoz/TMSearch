@@ -14,29 +14,41 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 
+import com.devandroid.tmsearch.Model.Movie;
 import com.devandroid.tmsearch.Model.MoviesRequest;
 import com.devandroid.tmsearch.Model.ReviewsRequest;
 import com.devandroid.tmsearch.Model.VideosRequest;
-import com.devandroid.tmsearch.Network.Network;
 import com.devandroid.tmsearch.Retrofit.RetrofitClient;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         RetrofitClient.listReceivedListenter,
-        ListAdapter.ListItemClickListener,
+        MovieAdapter.ListItemClickListener,
         SwipeRefreshLayout.OnRefreshListener {
 
     /**
      * intent/bundle
      */
     public static final String EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE = "extra_main_act_detail_act_movie";
+
+    /**
+     * Constants
+     */
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final int MOST_POPULAR = 0;
+    private static final int TOP_RATED = 1;
+    private static final int NOW_PLAYING = 2;
+    private static final int UPCOMING = 3;
+    private static final int FAVORITES = 4;
 
     /**
      * UI components
@@ -52,16 +64,8 @@ public class MainActivity extends AppCompatActivity
      * Data
      */
     private RetrofitClient mRetrofitClient;
-    private ListAdapter mAdapter;
+    private MovieAdapter mAdapter;
     private MoviesRequest mMoviesRequest;
-    private ArrayList<ListItem> mLstMovieItems;
-
-    private static final int MOST_POPULAR = 0;
-    private static final int TOP_RATED = 1;
-    private static final int NOW_PLAYING = 2;
-    private static final int UPCOMING = 3;
-    private static final int FAVORITES = 4;
-
     private int mLastSelection = MOST_POPULAR;
 
 
@@ -70,39 +74,62 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /**
+         * Getting UI references
+         */
         mToolbar = findViewById(R.id.toolbar);
         mDrawer = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mRvListMovies = findViewById(R.id.rv_list_movies);
         mSwipeRefresh = findViewById(R.id.sr_swipeRefresh);
 
+        /**
+         * Set Toolbar and get actionbar
+         */
         setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
 
+        /**
+         * Set Drawer Layout
+         */
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        /**
+         * Set listener to Navigation View
+         */
         mNavigationView.setNavigationItemSelectedListener(this);
 
-
+        /**
+         * Set listener to Swipe Refresh
+         */
         mSwipeRefresh.setOnRefreshListener(this);
 
+        /**
+         * Create retrofit and set listener to
+         */
+        mRetrofitClient = new RetrofitClient(this);
+
+        /**
+         * Setup recycler view, layout manager
+         */
         LinearLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mRvListMovies.setLayoutManager(layoutManager);
         mRvListMovies.setHasFixedSize(true);
 
-        mAdapter = new ListAdapter(MainActivity.this);
+        /**
+         * Setup movie list adapter
+         */
+        mAdapter = new MovieAdapter(MainActivity.this);
         mRvListMovies.setAdapter(mAdapter);
 
-
         /**
-         * do the first request to populate recycler view
+         * do the first request to populate movie list
          */
         mActionBar.setTitle(getString(R.string.most_popular_title));
         mLastSelection = MOST_POPULAR;
         mSwipeRefresh.setRefreshing(true);
-        mRetrofitClient = new RetrofitClient(this);
         mRetrofitClient.getMostPopularRequest();
 
         /**
@@ -155,6 +182,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.nav_favorites:
                 mActionBar.setTitle(getString(R.string.favorites_title));
+                mLastSelection = FAVORITES;
                 mMoviesRequest = null;
                 showMovieList();
                 break;
@@ -169,6 +197,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         mDrawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 
@@ -187,17 +216,12 @@ public class MainActivity extends AppCompatActivity
 
         mSwipeRefresh.setRefreshing(false);
 
-
         /**
-         * Write list with name of recipes
+         * Write list
          */
         if(moviesRequest!=null) {
-            try {
-                mMoviesRequest = moviesRequest;
-                showMovieList();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            mMoviesRequest = moviesRequest;
+            showMovieList();
         }
     }
 
@@ -245,19 +269,19 @@ public class MainActivity extends AppCompatActivity
             case UPCOMING:
                 mRetrofitClient.getUpcomingRequest();
                 break;
+            case FAVORITES:
+                mSwipeRefresh.setRefreshing(false);
+                break;
         }
-
     }
 
     private void showMovieList() {
 
-        mLstMovieItems = new ArrayList<>();
-        if(mMoviesRequest != null) {
-            for (int i = 0; i < mMoviesRequest.getSize(); i++) {
-                mLstMovieItems.add(new ListItem(mMoviesRequest.getItem(i).getmStrTitle(), Network.URL_POSTER_SIZE_185PX(mMoviesRequest.getItem(i).mStrPosterPath)));
-            }
+        if(mMoviesRequest!=null) {
+            mAdapter.setListAdapter(mMoviesRequest.getmMovies());
+        } else {
+            mAdapter.setListAdapter(new ArrayList<Movie>());
         }
-        mAdapter.setListAdapter(mLstMovieItems);
     }
 
 }

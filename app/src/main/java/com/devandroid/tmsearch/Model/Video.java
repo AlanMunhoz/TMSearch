@@ -4,9 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class Video {
 
-    private static final String YOUTUBE_IMAGE_URL(String id) { return "http://i3.ytimg.com/vi/"+id+"/hqdefault.jpg"; }
-    private static final String YOUTUBE_VIDEO_URL(String id) { return "https://www.youtube.com/watch?v="+id; }
-
     @SerializedName("id")
     private String mId;
 
@@ -56,20 +53,8 @@ public class Video {
         return mName;
     }
 
-    public String getYoutubeImageUrl() {
-
-        if(mSite.equals("YouTube")) {
-            return YOUTUBE_IMAGE_URL(mKey);
-        }
-        return "";
-    }
-
-    public String getYoutubeVideoUrl() {
-
-        if(mSite.equals("YouTube")) {
-            return YOUTUBE_VIDEO_URL( mKey);
-        }
-        return "";
+    public String getKey() {
+        return mKey;
     }
 
 }

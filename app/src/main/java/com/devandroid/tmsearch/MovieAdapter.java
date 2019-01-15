@@ -8,36 +8,38 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.devandroid.tmsearch.Model.Movie;
+import com.devandroid.tmsearch.Network.Network;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ListViewHolder> {
 
     private ListItemClickListener mOnClickListener;
-    private ArrayList<ListItem> mListItems;
+    private ArrayList<Movie> mListItems;
     private Context mContext;
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
     }
 
-    ListAdapter(ListItemClickListener listener) {
+    MovieAdapter(ListItemClickListener listener) {
         mOnClickListener = listener;
     }
 
-    public void setListAdapter(ArrayList<ListItem> listItems) {
+    public void setListAdapter(ArrayList<Movie> listItems) {
         mListItems = listItems;
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public ListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MovieAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         mContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.list_item, parent, false);
+        View view = inflater.inflate(R.layout.movie_item, parent, false);
         ListViewHolder viewHolder = new ListViewHolder(view);
         return viewHolder;
     }
@@ -66,7 +68,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         }
 
         void bind(int listIndex) {
-            Picasso.with(mContext).load(mListItems.get(listIndex).getFigure()).into(ivFigure);
+            Picasso.with(mContext).load(Network.URL_POSTER_SIZE_185PX(mListItems.get(listIndex).mStrPosterPath)).into(ivFigure);
+
         }
 
         @Override
