@@ -1,10 +1,13 @@
 package com.devandroid.tmsearch.Retrofit;
 
 import com.devandroid.tmsearch.Model.MoviesRequest;
+import com.devandroid.tmsearch.Model.ReviewsRequest;
+import com.devandroid.tmsearch.Model.VideosRequest;
 import com.devandroid.tmsearch.Network.Network;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface RetrofitInterface {
@@ -20,5 +23,11 @@ public interface RetrofitInterface {
 
     @GET(Network.UPCOMING_SEARCH)
     Call<MoviesRequest> getUpcomingRequest(@Query("api_key") String apiKey);
+
+    @GET(Network.VIDEOS_SEARCH)
+    Call<VideosRequest> getVideosRequest(@Path("id") String id, @Query("api_key") String apiKey);
+
+    @GET(Network.REVIEWS_SEARCH)
+    Call<ReviewsRequest> getReviewsRequest(@Path("id") String id, @Query("api_key") String apiKey);
 
 }

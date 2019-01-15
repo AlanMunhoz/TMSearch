@@ -1,10 +1,19 @@
 package com.devandroid.tmsearch.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Review {
 
+    @SerializedName("author")
     private String mAuthor;
+
+    @SerializedName("content")
     private String mContent;
+
+    @SerializedName("id")
     private String mId;
+
+    @SerializedName("url")
     private String mUrl;
 
     public Review(String strAuthor, String strContent, String strId, String strUrl) {

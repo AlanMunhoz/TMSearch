@@ -1,5 +1,6 @@
 package com.devandroid.tmsearch;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -17,8 +18,12 @@ import android.view.MenuItem;
 
 
 import com.devandroid.tmsearch.Model.MoviesRequest;
+import com.devandroid.tmsearch.Model.ReviewsRequest;
+import com.devandroid.tmsearch.Model.VideosRequest;
 import com.devandroid.tmsearch.Network.Network;
 import com.devandroid.tmsearch.Retrofit.RetrofitClient;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -28,6 +33,14 @@ public class MainActivity extends AppCompatActivity
         ListAdapter.ListItemClickListener,
         SwipeRefreshLayout.OnRefreshListener {
 
+    /**
+     * intent/bundle
+     */
+    public static final String EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE = "extra_main_act_detail_act_movie";
+
+    /**
+     * UI components
+     */
     private Toolbar mToolbar;
     private ActionBar mActionBar;
     private DrawerLayout mDrawer;
@@ -35,7 +48,9 @@ public class MainActivity extends AppCompatActivity
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRvListMovies;
 
-
+    /**
+     * Data
+     */
     private RetrofitClient mRetrofitClient;
     private ListAdapter mAdapter;
     private MoviesRequest mMoviesRequest;
@@ -45,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     private static final int TOP_RATED = 1;
     private static final int NOW_PLAYING = 2;
     private static final int UPCOMING = 3;
+    private static final int FAVORITES = 4;
 
     private int mLastSelection = MOST_POPULAR;
 
@@ -186,6 +202,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void videosReceived(VideosRequest videosRequest) { }
+
+    @Override
+    public void reviewsReceived(ReviewsRequest reviewsRequest) { }
+
+    @Override
     public void loadFailure() {
 
         mSwipeRefresh.setRefreshing(false);
@@ -195,18 +217,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListItemClick(int clickedItemIndex) {
 
-        /*
-        Context context = MainActivity.this;
-        Class destinyActivity = DetailsActivity.class;
-        Intent intent = new Intent(context, destinyActivity);
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
 
         if(mLastSelection == FAVORITES) {
-            intent.putExtra(BUNDLE_DETAILS_EXTRA, mLstFavoriteEntries.get(clickedItemIndex).getMovie());
+            //intent.putExtra(EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE, mLstFavoriteEntries.get(clickedItemIndex).getMovie());
         } else {
-            intent.putExtra(BUNDLE_DETAILS_EXTRA, mMoviesRequest.getItem(clickedItemIndex));
+            intent.putExtra(EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE, Parcels.wrap(mMoviesRequest.getItem(clickedItemIndex)));
         }
         startActivity(intent);
-        */
+
     }
 
     @Override
@@ -235,7 +254,7 @@ public class MainActivity extends AppCompatActivity
         mLstMovieItems = new ArrayList<>();
         if(mMoviesRequest != null) {
             for (int i = 0; i < mMoviesRequest.getSize(); i++) {
-                mLstMovieItems.add(new ListItem(mMoviesRequest.getItem(i).getmStrTitle(), Network.IMAGE_URL + Network.IMAGE_POSTER_SIZE_185PX + mMoviesRequest.getItem(i).getmStrPosterPath()));
+                mLstMovieItems.add(new ListItem(mMoviesRequest.getItem(i).getmStrTitle(), Network.URL_POSTER_SIZE_185PX(mMoviesRequest.getItem(i).mStrPosterPath)));
             }
         }
         mAdapter.setListAdapter(mLstMovieItems);

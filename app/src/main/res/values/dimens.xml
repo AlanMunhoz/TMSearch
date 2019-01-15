@@ -15,4 +15,7 @@
     <dimen name="elevation_fab">6dp</dimen>
     <dimen name="elevation_app_bar">4dp</dimen>
 
+    <!--Detail Screen-->
+    <dimen name="fab_margin">16dp</dimen>
+
 </resources>

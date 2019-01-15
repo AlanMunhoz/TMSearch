@@ -1,11 +1,18 @@
 package com.devandroid.tmsearch.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class ReviewsRequest {
 
+    @SerializedName("id")
     private String mId;
+
+    @SerializedName("page")
     private String mPages;
+
+    @SerializedName("results")
     private ArrayList<Review> mReviews;
 
     public ArrayList<Review> getReviews() { return mReviews; }

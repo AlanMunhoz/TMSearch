@@ -3,6 +3,8 @@ package com.devandroid.tmsearch.Retrofit;
 import android.util.Log;
 
 import com.devandroid.tmsearch.Model.MoviesRequest;
+import com.devandroid.tmsearch.Model.ReviewsRequest;
+import com.devandroid.tmsearch.Model.VideosRequest;
 import com.devandroid.tmsearch.Network.Network;
 
 import retrofit2.Call;
@@ -19,6 +21,8 @@ public class RetrofitClient {
 
     public interface listReceivedListenter {
         void listReceived(MoviesRequest moviesRequest);
+        void videosReceived(VideosRequest videosRequest);
+        void reviewsReceived(ReviewsRequest reviewsRequest);
         void loadFailure();
     }
 
@@ -142,4 +146,61 @@ public class RetrofitClient {
         });
     }
 
+    public void getVideosRequest(String id) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Network.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+
+        retrofitInterface.getVideosRequest(id, Network.API_KEY).enqueue(new Callback<VideosRequest>() {
+            @Override
+            public void onResponse(Call<VideosRequest> call, Response<VideosRequest> response) {
+                try {
+                    VideosRequest videosRequest = response.body();
+                    mListReceivedListenter.videosReceived(videosRequest);
+                    Log.d(LOG_TAG, "Load successful with " + videosRequest.getSize() + " elements!");
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VideosRequest> call, Throwable t) {
+                mListReceivedListenter.loadFailure();
+                Log.d(LOG_TAG, "Retrofit load error");
+            }
+        });
+    }
+
+    public void getReviewsRequest(String id) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Network.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+
+        retrofitInterface.getReviewsRequest(id, Network.API_KEY).enqueue(new Callback<ReviewsRequest>() {
+            @Override
+            public void onResponse(Call<ReviewsRequest> call, Response<ReviewsRequest> response) {
+                try {
+                    ReviewsRequest reviewsRequest = response.body();
+                    mListReceivedListenter.reviewsReceived(reviewsRequest);
+                    Log.d(LOG_TAG, "Load successful with " + reviewsRequest.getSize() + " elements!");
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ReviewsRequest> call, Throwable t) {
+                mListReceivedListenter.loadFailure();
+                Log.d(LOG_TAG, "Retrofit load error");
+            }
+        });
+    }
 }

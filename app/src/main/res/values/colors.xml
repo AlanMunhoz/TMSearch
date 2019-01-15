@@ -21,4 +21,13 @@
     <color name="colorTextColorButton">#ffffff</color>
     <color name="colorViewBackground">#ffffff</color>
 
+    <!--Detail Screen-->
+    <color name="clMiddleColor">#80505050</color>
+    <color name="clLightTextColor">#ffffff</color>
+    <color name="clDarkTextColor">#000000</color>
+    <color name="clUnselectedBackground">#FFFFFF</color>
+    <color name="clSelectedBackground">#17a589</color>
+
+
+
 </resources>

@@ -32,5 +32,15 @@
     <string name="ActivityLogin_editTextTmdbKey">The Movie DB Key</string>
     <string name="ActivityLogin_buttonLogin">Logar</string>
 
+    <!--activity_detail-->
+    <string name="vote_average_title">vote average</string>
+    <string name="release_date_title">release date</string>
+    <string name="vote_count_title">vote count</string>
+    <string name="popularity_title">popularity</string>
+    <string name="overview_title">Overview</string>
+    <string name="reviews_title">Reviews</string>
+    <string name="no_reviews">No reviews for this movie!</string>
+    <string name="fab_content_description">Like</string>
+
 
 </resources>
