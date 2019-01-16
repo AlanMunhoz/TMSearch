@@ -1,14 +1,21 @@
 package com.devandroid.tmsearch;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,11 +26,16 @@ import com.devandroid.tmsearch.Model.Video;
 import com.devandroid.tmsearch.Model.VideosRequest;
 import com.devandroid.tmsearch.Network.Network;
 import com.devandroid.tmsearch.Retrofit.RetrofitClient;
+import com.devandroid.tmsearch.Util.AppExecutors;
+import com.devandroid.tmsearch.RoomDatabase.AppDatabase;
+import com.devandroid.tmsearch.RoomDatabase.DetailsViewModel;
+import com.devandroid.tmsearch.RoomDatabase.DetailsViewModelFactory;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DetailActivity extends AppCompatActivity
         implements VideoAdapter.ListItemClickListener,
@@ -47,6 +59,7 @@ public class DetailActivity extends AppCompatActivity
     private TextView tvPopularity;
     private TextView tvReviews;
     private RecyclerView mRvVideos;
+    private FloatingActionButton mFavoriteFab;
 
     /**
      * Data
@@ -56,6 +69,8 @@ public class DetailActivity extends AppCompatActivity
     private Movie mMovie;
     private ArrayList<Video> mLstVideos;
     private ReviewsRequest mReviewRequest;
+    private Movie mFavoriteEntry;
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +90,7 @@ public class DetailActivity extends AppCompatActivity
         tvPopularity = findViewById(R.id.tvPopularity);
         tvReviews = findViewById(R.id.tvReviews);
         mRvVideos = findViewById(R.id.rvVideos);
+        mFavoriteFab = findViewById(R.id.favorite_fab);
 
         /**
          * Create retrofit and set listener to
@@ -124,6 +140,13 @@ public class DetailActivity extends AppCompatActivity
         }
 
         /**
+         * Create AppDatabase object
+         * Set listener to LiveData
+         */
+        mDb = AppDatabase.getInstance(getApplicationContext());
+        addLiveDataObserver();
+
+        /**
          * Setup Toolbar and Collapsing toolbar
          */
         final Toolbar toolbar = findViewById(R.id.Toolbar);
@@ -140,6 +163,28 @@ public class DetailActivity extends AppCompatActivity
         collapsingToolbarLayout.setCollapsedTitleTextColor(getColor(R.color.clLightTextColor));
         collapsingToolbarLayout.setContentScrimColor(getColor(R.color.clSelectedBackground));
 
+        mFavoriteFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(mFavoriteEntry!=null) {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDb.MoviesDAO().deleteMovie(mFavoriteEntry);
+                        }
+                    });
+                } else {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDb.MoviesDAO().insertMovie(mMovie);
+                        }
+                    });
+                }
+
+            }
+        });
     }
 
     @Override
@@ -214,6 +259,34 @@ public class DetailActivity extends AppCompatActivity
         } else {
             tvReviews.setText(strText);
         }
+    }
+
+    /**
+     * Adding observer to database, this way allow us to know when database changes occurs.
+     */
+    private void addLiveDataObserver() {
+
+        DetailsViewModelFactory factory = new DetailsViewModelFactory(mDb, mMovie.getmStrId());
+        DetailsViewModel viewModel = ViewModelProviders.of(this, factory).get(DetailsViewModel.class);
+
+        viewModel.getFavoriteEntry().observe(this, new Observer<List<Movie>>() {
+
+            /**
+             * onChanged runs on the main thread by default
+             */
+            @Override
+            public void onChanged(@Nullable List<Movie> favoriteMovies) {
+                Log.d(DetailsViewModel.LOG_TAG, "onChanged DB");
+
+                if(favoriteMovies!=null && favoriteMovies.size()>0) {
+                    mFavoriteEntry = favoriteMovies.get(0);
+                    mFavoriteFab.setImageDrawable(ContextCompat.getDrawable(DetailActivity.this, R.drawable.baseline_favorite_white_24));
+                } else {
+                    mFavoriteEntry = null;
+                    mFavoriteFab.setImageDrawable(ContextCompat.getDrawable(DetailActivity.this, R.drawable.baseline_favorite_border_white_24));
+                }
+            }
+        });
     }
 
 }

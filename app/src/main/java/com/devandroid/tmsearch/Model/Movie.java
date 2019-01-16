@@ -1,23 +1,44 @@
 package com.devandroid.tmsearch.Model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
-
+/**
+ * Gson use (Gson is used by Retrofit)
+ * (1) @SerializedName("json field") used to convert json to object
+ */
 /**
  * Parcel use
  * (1) Annotate the class with the @Parcel decorator.
  * (2) Use only public fields (private fields cannot be detected during annotation) that need to be serialized.
  * (3) Create a public constructor with no arguments for the annotation library.
  */
+/**
+ * Room use
+ * POJO - Plain Old Java Object
+ *
+ * (1) @Entity(tableName = "Favorite") name of table
+ * (2) @PrimaryKey(autoGenerate = true) primary key of database
+ * (3) all attributes are columns of table
+ * (4) constructor with id to Room use
+ * (5) @Ignore to constructor thar we'll use
+ */
 @Parcel
+@Entity(tableName = "Favorite")
 public class Movie {
 
     @SerializedName("vote_count")
     public String mStrVoteCount;
 
+    @PrimaryKey(autoGenerate = false)
     @SerializedName("id")
+    @NonNull
     public String mStrId;
 
     @SerializedName("video")
@@ -56,9 +77,15 @@ public class Movie {
     @SerializedName("release_date")
     public String mStrReleaseDate;
 
-
+    /**
+     * used by Parcel
+     */
+    @Ignore
     public Movie() {}
 
+    /**
+     * Used by Room on read time
+     */
     public Movie(
             String strId,
             String strTitle,
@@ -73,7 +100,7 @@ public class Movie {
             String strOriginalTitle,
             String strBackdropPath,
             String strAdult
-            ) {
+    ) {
 
         mStrId = strId;
         mStrTitle = strTitle;

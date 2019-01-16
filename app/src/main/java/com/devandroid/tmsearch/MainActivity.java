@@ -1,9 +1,12 @@
 package com.devandroid.tmsearch;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -25,10 +28,12 @@ import com.devandroid.tmsearch.Model.MoviesRequest;
 import com.devandroid.tmsearch.Model.ReviewsRequest;
 import com.devandroid.tmsearch.Model.VideosRequest;
 import com.devandroid.tmsearch.Retrofit.RetrofitClient;
+import com.devandroid.tmsearch.RoomDatabase.MainViewModel;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
@@ -72,6 +77,7 @@ public class MainActivity extends AppCompatActivity
     private MovieAdapter mAdapter;
     private MoviesRequest mMoviesRequest;
     private int mLastSelection = MOST_POPULAR;
+    private ArrayList<Movie> mLstFavoriteMovies;
 
 
     @Override
@@ -129,6 +135,10 @@ public class MainActivity extends AppCompatActivity
         mAdapter = new MovieAdapter(MainActivity.this);
         mRvListMovies.setAdapter(mAdapter);
 
+        /**
+         * Set listener to LiveData
+         */
+        addLiveDataObserver();
 
         /**
          * Restore the search if exists and call request movies
@@ -159,7 +169,6 @@ public class MainActivity extends AppCompatActivity
          */
         //mNavigationView.setCheckedItem(R.id.nav_most_popular);
         mNavigationView.getMenu().getItem(0).setChecked(true);
-
 
     }
 
@@ -212,7 +221,6 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.nav_favorites:
                 mLastSelection = FAVORITES;
-                mMoviesRequest = null;
                 showMovieList();
                 break;
 
@@ -273,7 +281,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
 
         if(mLastSelection == FAVORITES) {
-            //intent.putExtra(EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE, mLstFavoriteEntries.get(clickedItemIndex).getMovie());
+            intent.putExtra(EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE, Parcels.wrap(mLstFavoriteMovies.get(clickedItemIndex)));
         } else {
             intent.putExtra(EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE, Parcels.wrap(mMoviesRequest.getItem(clickedItemIndex)));
         }
@@ -339,10 +347,14 @@ public class MainActivity extends AppCompatActivity
 
     private void showMovieList() {
 
-        if(mMoviesRequest!=null) {
-            mAdapter.setListAdapter(mMoviesRequest.getmMovies());
+        if(mLastSelection == FAVORITES) {
+            mAdapter.setListAdapter(mLstFavoriteMovies);
         } else {
-            mAdapter.setListAdapter(new ArrayList<Movie>());
+            if (mMoviesRequest != null) {
+                mAdapter.setListAdapter(mMoviesRequest.getmMovies());
+            } else {
+                mAdapter.setListAdapter(new ArrayList<Movie>());
+            }
         }
     }
 
@@ -355,4 +367,31 @@ public class MainActivity extends AppCompatActivity
         return nColumns;
     }
 
+    /**
+     * Adding observer to database, this way allow us to know when database changes occurs.
+     */
+    private void addLiveDataObserver() {
+
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        /**
+         * onChanged runs on the main thread by default
+         */
+        viewModel.getFavoriteEntries().observe(this, new Observer<List<Movie>>() {
+
+            //onChanged runs on the main thread by default
+            @Override
+            public void onChanged(@Nullable List<Movie> favoriteMovies) {
+
+                Log.d(MainViewModel.LOG_TAG, "onChanged DB");
+                mLstFavoriteMovies = new ArrayList<>();
+                for(int i=0;i<favoriteMovies.size();i++) {
+                    mLstFavoriteMovies.add(favoriteMovies.get(i));
+                }
+                if(mLastSelection == FAVORITES) {
+                    showMovieList();
+                }
+            }
+        });
+    }
 }
