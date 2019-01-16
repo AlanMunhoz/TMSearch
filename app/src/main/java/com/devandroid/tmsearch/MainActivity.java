@@ -1,5 +1,6 @@
 package com.devandroid.tmsearch;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -39,11 +41,14 @@ public class MainActivity extends AppCompatActivity
      * intent/bundle
      */
     public static final String EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE = "extra_main_act_detail_act_movie";
+    private static final String INTRA_MAIN_ACT_LAST_SELECTION = "intra_main_act_last_selection";
+    private static final String INTRA_MAIN_ACT_MOVIE_REQUEST = "intra_main_act_movie_request";
 
     /**
      * Constants
      */
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final int MINIMUM_CEL_WIDTH = 250;
     private static final int MOST_POPULAR = 0;
     private static final int TOP_RATED = 1;
     private static final int NOW_PLAYING = 2;
@@ -114,7 +119,7 @@ public class MainActivity extends AppCompatActivity
         /**
          * Setup recycler view, layout manager
          */
-        LinearLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        LinearLayoutManager layoutManager = new GridLayoutManager(this, getNCardColumns(this));
         mRvListMovies.setLayoutManager(layoutManager);
         mRvListMovies.setHasFixedSize(true);
 
@@ -124,13 +129,30 @@ public class MainActivity extends AppCompatActivity
         mAdapter = new MovieAdapter(MainActivity.this);
         mRvListMovies.setAdapter(mAdapter);
 
+
         /**
-         * do the first request to populate movie list
+         * Restore the search if exists and call request movies
          */
-        mActionBar.setTitle(getString(R.string.most_popular_title));
-        mLastSelection = MOST_POPULAR;
-        mSwipeRefresh.setRefreshing(true);
-        mRetrofitClient.getMostPopularRequest();
+        if (savedInstanceState != null) {
+            mLastSelection = savedInstanceState.getInt(INTRA_MAIN_ACT_LAST_SELECTION);
+            mMoviesRequest = Parcels.unwrap(savedInstanceState.getParcelable(INTRA_MAIN_ACT_MOVIE_REQUEST));
+        }
+
+        /**
+         * if there is movieRequest show in list, otherwise request by first time
+         */
+        if(mLastSelection == FAVORITES) {
+            //showFavoriteList();
+        } else {
+            if(mMoviesRequest != null) {
+                showMovieList();
+            } else {
+                mLastSelection = MOST_POPULAR;
+                mSwipeRefresh.setRefreshing(true);
+                mRetrofitClient.getMostPopularRequest();
+            }
+        }
+        setTitleActionBar();
 
         /**
          * Set navigation view select with the first one
@@ -141,15 +163,26 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        /**
+         * Store the last search did by user
+         */
+        outState.putInt(INTRA_MAIN_ACT_LAST_SELECTION, mLastSelection);
+        outState.putParcelable(INTRA_MAIN_ACT_MOVIE_REQUEST, Parcels.wrap(mMoviesRequest));
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
         int id = item.getItemId();
 
         switch (id) {
 
             case R.id.nav_most_popular:
-                mActionBar.setTitle(getString(R.string.most_popular_title));
                 mLastSelection = MOST_POPULAR;
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(this);
@@ -157,7 +190,6 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_top_rated:
-                mActionBar.setTitle(getString(R.string.top_rated_title));
                 mLastSelection = TOP_RATED;
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(this);
@@ -165,7 +197,6 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_now_playing:
-                mActionBar.setTitle(getString(R.string.now_playing_title));
                 mLastSelection = NOW_PLAYING;
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(this);
@@ -173,7 +204,6 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_upcoming:
-                mActionBar.setTitle(getString(R.string.upcoming_title));
                 mLastSelection = UPCOMING;
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(this);
@@ -181,14 +211,12 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_favorites:
-                mActionBar.setTitle(getString(R.string.favorites_title));
                 mLastSelection = FAVORITES;
                 mMoviesRequest = null;
                 showMovieList();
                 break;
 
             case R.id.nav_exit:
-                mActionBar.setTitle(getString(R.string.exit_title));
                 super.onBackPressed();
                 break;
 
@@ -196,6 +224,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
+        setTitleActionBar();
         mDrawer.closeDrawer(GravityCompat.START);
 
         return true;
@@ -275,6 +304,39 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void setTitleActionBar() {
+
+        if(mActionBar != null) {
+
+            switch (mLastSelection) {
+
+                case MOST_POPULAR:
+                    mActionBar.setTitle(getString(R.string.most_popular_title));
+                    break;
+
+                case TOP_RATED:
+                    mActionBar.setTitle(getString(R.string.top_rated_title));
+                    break;
+
+                case NOW_PLAYING:
+                    mActionBar.setTitle(getString(R.string.now_playing_title));
+                    break;
+
+                case UPCOMING:
+                    mActionBar.setTitle(getString(R.string.upcoming_title));
+                    break;
+
+                case FAVORITES:
+                    mActionBar.setTitle(getString(R.string.favorites_title));
+                    break;
+
+                default:
+                    mActionBar.setTitle(getString(R.string.most_popular_title));
+                    break;
+            }
+        }
+    }
+
     private void showMovieList() {
 
         if(mMoviesRequest!=null) {
@@ -282,6 +344,15 @@ public class MainActivity extends AppCompatActivity
         } else {
             mAdapter.setListAdapter(new ArrayList<Movie>());
         }
+    }
+
+    /**
+     * calculate and define how many columns will be present in recycler view
+     */
+    private int getNCardColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int nColumns = (displayMetrics.widthPixels / MINIMUM_CEL_WIDTH);
+        return nColumns;
     }
 
 }

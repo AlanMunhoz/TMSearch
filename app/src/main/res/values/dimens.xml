@@ -1,7 +1,5 @@
 <resources>
 
-    <dimen name="columns_grid_movies">2</dimen>
-
     <!--Navigation view-->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
