@@ -1,12 +1,15 @@
 package com.devandroid.tmsearch.Firebase;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -24,21 +27,58 @@ import java.util.List;
 
 public final class FirebaseManager {
 
-    private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private static List<mListener> listeners = new ArrayList<mListener>();
+    private static FirebaseAuth mAuth;
+    private static FirebaseAnalytics mAnalytics;
+    private static List<mListener> mListeners;
+
+    public enum EventKeys {
+
+        LOGIN_BUTTON("1", "login_button", "action"),
+        CREATE_ACCOUNT_BUTTON("2", "create_account_button", "action"),
+        FAVORITE_BUTTON("3", "favorite_button", "action"),
+        MOST_POPULAR_MENU("4", "most_popular_menu", "action"),
+        TOP_RATED_MENU("5", "top_rated_menu", "action"),
+        NOW_LAYING_MENU("6", "now_playing_menu", "action"),
+        UPCOMING_MENU("7", "upcoming_menu", "action"),
+        FAVORITES_MENU("8", "favorites_menu", "action"),
+        EXIT_MENU("9", "exit_menu", "action"),
+        MOVIE_CLICK_LIST("10", "movie_click_list", "action"),
+        TRAILER_CLICK_LIST("11", "trailer_click_list", "action");
+
+        public String mId;
+        public String mName;
+        public String mContentType;
+
+        EventKeys(String id, String name, String contentType) {
+            mId = id;
+            mName = name;
+            mContentType = contentType;
+        }
+    }
+
+    /**
+     * Initialize the objects in Firebase
+     */
+    public static void FirebaseManagerInit(Context context) {
+
+        mAuth = FirebaseAuth.getInstance();
+        mAnalytics = FirebaseAnalytics.getInstance(context);
+        mListeners = new ArrayList();
+
+    }
 
     /**
      * Add listener to object pass by parameter
      */
     public static void addListener(mListener toAdd) {
-        listeners.add(toAdd);
+        mListeners.add(toAdd);
     }
 
     /**
      * Add listener to object pass by parameter
      */
     public static void removeListener(mListener toAdd) {
-        listeners.remove(toAdd);
+        mListeners.remove(toAdd);
     }
 
     /**
@@ -95,7 +135,7 @@ public final class FirebaseManager {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        for (mListener events : listeners) events.mListenerSignInSuccessful();
+                        for (mListener events : mListeners) events.mListenerSignInSuccessful();
                     } else {
                         String erroExcecao = "";
                         try {
@@ -110,7 +150,7 @@ public final class FirebaseManager {
                             erroExcecao = ErrorCodes.FirebaseAuthGenericError /*+ e.getMessage()*/;
                             e.printStackTrace();
                         }
-                        for (mListener events : listeners) events.mListenerSignInFail(erroExcecao);
+                        for (mListener events : mListeners) events.mListenerSignInFail(erroExcecao);
                     }
                 }
             });
@@ -144,7 +184,7 @@ public final class FirebaseManager {
                                 .setDisplayName(name).build();
                         user.updateProfile(profileUpdates);
 
-                        for (mListener events : listeners) events.mListenerRegisterSuccessful();
+                        for (mListener events : mListeners) events.mListenerRegisterSuccessful();
                     }
                     else {
                         String erroExcecao="";
@@ -162,7 +202,7 @@ public final class FirebaseManager {
                             erroExcecao = ErrorCodes.FirebaseAuthGenericErrorCreateUser /*+ e.getMessage()*/;
                             e.printStackTrace();
                         }
-                        for (mListener events : listeners) events.mListenerRegisterFail(erroExcecao);
+                        for (mListener events : mListeners) events.mListenerRegisterFail(erroExcecao);
                     }
                 }
             });
@@ -210,14 +250,14 @@ public final class FirebaseManager {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            for (mListener events : listeners) events.mListenerChangeCredentialsSuccessful();
+                                            for (mListener events : mListeners) events.mListenerChangeCredentialsSuccessful();
                                         }else {
-                                            for (mListener events : listeners) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangePasswordError);
+                                            for (mListener events : mListeners) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangePasswordError);
                                         }
                                     }
                                 });
                             }else {
-                                for (mListener events : listeners) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangeEmailError);
+                                for (mListener events : mListeners) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangeEmailError);
                             }
                         }
                     });
@@ -229,10 +269,29 @@ public final class FirebaseManager {
                         erroExcecao = ErrorCodes.FirebaseAuthReauthenticateGenericError + e.getMessage();
                         e.printStackTrace();
                     }
-                    for (mListener events : listeners) events.mListenerSignInFail(erroExcecao);
+                    for (mListener events : mListeners) events.mListenerSignInFail(erroExcecao);
                 }
             }
         });
+    }
+
+    /**
+     * Make log event on Firebase Analytics
+     */
+    public static void FirebaseAnalyticsLogEvent(EventKeys eventKey) {
+
+        /**
+         * Enable DebugView to visualize sent events on terminal through avd
+         * (1) In Android SDK Manager/Android SDK/SDK Tools, enable Android SDK Platform-Tools
+         * (2) Verify if there is the adb.exe in folder like "C:\Users\Alan\AppData\Local\Android\sdk\platform-tools"
+         * (3) Execute the command "adb shell setprop debug.firebase.analytics.app <package_name>"
+         */
+
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, eventKey.mId);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, eventKey.mName);
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, eventKey.mContentType);
+        mAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
 }

@@ -76,7 +76,9 @@ public class RegisterActivity extends AppCompatActivity implements mListener {
                 if(!strApiKey.isEmpty()) {
                     Preferences.saveStringTmdbApiKey(RegisterActivity.this, strApiKey);
                 }
+
                 startRegister();
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.CREATE_ACCOUNT_BUTTON);
             }
         });
 

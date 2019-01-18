@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.devandroid.tmsearch.Firebase.FirebaseManager;
 import com.devandroid.tmsearch.Model.Movie;
 import com.devandroid.tmsearch.Model.MoviesRequest;
 import com.devandroid.tmsearch.Model.ReviewsRequest;
@@ -182,7 +183,7 @@ public class DetailActivity extends AppCompatActivity
                         }
                     });
                 }
-
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.FAVORITE_BUTTON);
             }
         });
     }
@@ -201,6 +202,8 @@ public class DetailActivity extends AppCompatActivity
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
+
+        FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.TRAILER_CLICK_LIST);
 
         String videoUrl = Network.YOUTUBE_VIDEO_URL(mLstVideos.get(clickedItemIndex).getKey());
         Intent target = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl));

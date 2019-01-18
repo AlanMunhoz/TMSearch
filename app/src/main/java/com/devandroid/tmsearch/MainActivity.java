@@ -216,6 +216,7 @@ public class MainActivity extends AppCompatActivity
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(this);
                 mRetrofitClient.getMostPopularRequest();
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.MOST_POPULAR_MENU);
                 break;
 
             case R.id.nav_top_rated:
@@ -223,6 +224,7 @@ public class MainActivity extends AppCompatActivity
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(this);
                 mRetrofitClient.getTopRatedRequest();
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.TOP_RATED_MENU);
                 break;
 
             case R.id.nav_now_playing:
@@ -230,6 +232,7 @@ public class MainActivity extends AppCompatActivity
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(this);
                 mRetrofitClient.getNowPlayingRequest();
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.NOW_LAYING_MENU);
                 break;
 
             case R.id.nav_upcoming:
@@ -237,15 +240,18 @@ public class MainActivity extends AppCompatActivity
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(this);
                 mRetrofitClient.getUpcomingRequest();
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.UPCOMING_MENU);
                 break;
 
             case R.id.nav_favorites:
                 mLastSelection = FAVORITES;
                 showMovieList();
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.FAVORITES_MENU);
                 break;
 
             case R.id.nav_exit:
                 FirebaseManager.FirebaseAuthStartSignOut();
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.EXIT_MENU);
                 finish();
                 break;
 
@@ -298,6 +304,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
+
+        FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.MOVIE_CLICK_LIST);
 
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
 

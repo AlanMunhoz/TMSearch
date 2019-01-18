@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -44,6 +43,11 @@ public class LoginActivity extends AppCompatActivity implements mListener {
         mTvRegister = findViewById(R.id.tvRegister);
 
         /**
+         * Initialize the Firebase objects
+         */
+        FirebaseManager.FirebaseManagerInit(this);
+
+        /**
          * subscribe firebase auth listener
          */
         FirebaseManager.addListener(LoginActivity.this);
@@ -60,6 +64,7 @@ public class LoginActivity extends AppCompatActivity implements mListener {
             {
 
                 startSignIn();
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.LOGIN_BUTTON);
             }
         });
 
