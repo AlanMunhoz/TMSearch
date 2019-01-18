@@ -21,12 +21,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 
+import com.devandroid.tmsearch.Firebase.FirebaseManager;
 import com.devandroid.tmsearch.Model.Movie;
 import com.devandroid.tmsearch.Model.MoviesRequest;
 import com.devandroid.tmsearch.Model.ReviewsRequest;
 import com.devandroid.tmsearch.Model.VideosRequest;
+import com.devandroid.tmsearch.Network.Network;
+import com.devandroid.tmsearch.Preferences.Preferences;
 import com.devandroid.tmsearch.Retrofit.RetrofitClient;
 import com.devandroid.tmsearch.RoomDatabase.MainViewModel;
 
@@ -69,6 +74,9 @@ public class MainActivity extends AppCompatActivity
     private NavigationView mNavigationView;
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRvListMovies;
+    private TextView mTvNavHeaderName;
+    private TextView mTvNavHeaderEmail;
+    private ImageView mIvNavHeaderImage;
 
     /**
      * Data
@@ -93,6 +101,9 @@ public class MainActivity extends AppCompatActivity
         mNavigationView = findViewById(R.id.nav_view);
         mRvListMovies = findViewById(R.id.rv_list_movies);
         mSwipeRefresh = findViewById(R.id.sr_swipeRefresh);
+        mTvNavHeaderName = mNavigationView.getHeaderView(0).findViewById(R.id.tvNavHeaderName);
+        mTvNavHeaderEmail = mNavigationView.getHeaderView(0).findViewById(R.id.tvNavHeaderEmail);
+        mIvNavHeaderImage = mNavigationView.getHeaderView(0).findViewById(R.id.ivNavHeaderImage);
 
         /**
          * Set Toolbar and get actionbar
@@ -141,6 +152,12 @@ public class MainActivity extends AppCompatActivity
         addLiveDataObserver();
 
         /**
+         * Restoring The Movie Db Api Key from SharedPreferences
+         */
+        String strTmdbApiKey = Preferences.restoreStringTmdbApiKey(MainActivity.this);
+        Network.setApiKey(strTmdbApiKey);
+
+        /**
          * Restore the search if exists and call request movies
          */
         if (savedInstanceState != null) {
@@ -166,9 +183,12 @@ public class MainActivity extends AppCompatActivity
 
         /**
          * Set navigation view select with the first one
+         * Set User Name and Email on header_layout of Navigation View
          */
         //mNavigationView.setCheckedItem(R.id.nav_most_popular);
         mNavigationView.getMenu().getItem(0).setChecked(true);
+        mTvNavHeaderName.setText(FirebaseManager.FirebaseAuthGetUserName());
+        mTvNavHeaderEmail.setText(FirebaseManager.FirebaseAuthGetUserEmail());
 
     }
 
@@ -225,7 +245,8 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_exit:
-                super.onBackPressed();
+                FirebaseManager.FirebaseAuthStartSignOut();
+                finish();
                 break;
 
             default:

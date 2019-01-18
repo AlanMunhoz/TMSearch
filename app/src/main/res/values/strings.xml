@@ -27,10 +27,12 @@
     <string name="exit_title">Exit</string>
 
     <!-- activity_login -->
+    <string name="ActivityLogin_editTextName">name</string>
     <string name="ActivityLogin_editTextEmail">email</string>
-    <string name="ActivityLogin_editTextPassword">senha</string>
+    <string name="ActivityLogin_editTextPassword">password</string>
     <string name="ActivityLogin_editTextTmdbKey">The Movie DB Key</string>
-    <string name="ActivityLogin_buttonLogin">Logar</string>
+    <string name="ActivityLogin_buttonLogin">Login</string>
+    <string name="ActivityLogin_buttonRegister">Create Account</string>
 
     <!--activity_detail-->
     <string name="vote_average_title">vote average</string>
@@ -42,5 +44,7 @@
     <string name="no_reviews">No reviews for this movie!</string>
     <string name="fab_content_description">Like</string>
 
+    <!--activity_register-->
+    <string name="ActivityRegister_toolbarTitle">Register</string>
 
 </resources>
