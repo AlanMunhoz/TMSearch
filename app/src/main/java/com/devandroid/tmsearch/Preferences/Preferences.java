@@ -70,23 +70,4 @@ public class Preferences {
         return strName;
     }
 
-    public static void saveStringTmdbApiKey(Context context, String strApiKey) {
-
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putString(PREFS_TMDB_API_KEY, strApiKey);
-        editor.commit();
-    }
-
-    public static String restoreStringTmdbApiKey(Context context) {
-
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
-
-        String strName = sharedPreferences.getString(PREFS_TMDB_API_KEY, "");
-
-        return strName;
-    }
-
-
 }

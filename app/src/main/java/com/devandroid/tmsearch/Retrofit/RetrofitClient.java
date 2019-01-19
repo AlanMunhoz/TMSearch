@@ -45,7 +45,8 @@ public class RetrofitClient {
                 try {
                     MoviesRequest moviesRequest = response.body();
                     mListReceivedListenter.listReceived(moviesRequest);
-                    Log.d(LOG_TAG, "Load successful with " + moviesRequest.getSize() + " elements!");
+                    String elements = moviesRequest!=null ? Integer.toString(moviesRequest.getSize()) : "0";
+                    Log.d(LOG_TAG, "Load successful with " + elements + " elements!");
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -74,7 +75,8 @@ public class RetrofitClient {
                 try {
                     MoviesRequest moviesRequest = response.body();
                     mListReceivedListenter.listReceived(moviesRequest);
-                    Log.d(LOG_TAG, "Load successful with " + moviesRequest.getSize() + " elements!");
+                    String elements = moviesRequest!=null ? Integer.toString(moviesRequest.getSize()) : "0";
+                    Log.d(LOG_TAG, "Load successful with " + elements + " elements!");
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -103,7 +105,8 @@ public class RetrofitClient {
                 try {
                     MoviesRequest moviesRequest = response.body();
                     mListReceivedListenter.listReceived(moviesRequest);
-                    Log.d(LOG_TAG, "Load successful with " + moviesRequest.getSize() + " elements!");
+                    String elements = moviesRequest!=null ? Integer.toString(moviesRequest.getSize()) : "0";
+                    Log.d(LOG_TAG, "Load successful with " + elements + " elements!");
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -132,7 +135,8 @@ public class RetrofitClient {
                 try {
                     MoviesRequest moviesRequest = response.body();
                     mListReceivedListenter.listReceived(moviesRequest);
-                    Log.d(LOG_TAG, "Load successful with " + moviesRequest.getSize() + " elements!");
+                    String elements = moviesRequest!=null ? Integer.toString(moviesRequest.getSize()) : "0";
+                    Log.d(LOG_TAG, "Load successful with " + elements + " elements!");
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -161,7 +165,9 @@ public class RetrofitClient {
                 try {
                     VideosRequest videosRequest = response.body();
                     mListReceivedListenter.videosReceived(videosRequest);
-                    Log.d(LOG_TAG, "Load successful with " + videosRequest.getSize() + " elements!");
+                    String elements = videosRequest!=null ? Integer.toString(videosRequest.getSize()) : "0";
+                    Log.d(LOG_TAG, "Load successful with " + elements + " elements!");
+
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -190,7 +196,9 @@ public class RetrofitClient {
                 try {
                     ReviewsRequest reviewsRequest = response.body();
                     mListReceivedListenter.reviewsReceived(reviewsRequest);
-                    Log.d(LOG_TAG, "Load successful with " + reviewsRequest.getSize() + " elements!");
+                    String elements = reviewsRequest!=null ? Integer.toString(reviewsRequest.getSize()) : "0";
+                    Log.d(LOG_TAG, "Load successful with " + elements + " elements!");
+
                 } catch(Exception e) {
                     e.printStackTrace();
                 }

@@ -13,7 +13,9 @@
     <string name="menu_now_playing">Now Playing Movies</string>
     <string name="menu_upcoming">Upcoming Movies</string>
     <string name="menu_favorites">Favorites Movies</string>
+    <string name="menu_config">Configuration</string>
     <string name="menu_exit">Exit</string>
+    <string name="menu_title_more">More</string>
 
     <string name="poster_movie_content_desc">movie poster</string>
     <string name="tmsearch_logo">logo app</string>
@@ -45,10 +47,22 @@
     <string name="fab_content_description">Like</string>
 
     <!--activity_register-->
-    <string name="ActivityRegister_toolbarTitle">Register</string>
+    <string name="ActivityRegister_back_content_description">Back button</string>
+
+    <!--activity_config-->
+    <string name="ActivityConfig_toolbarTitle">Configuration</string>
 
     <!--Widget-->
     <string name="appwidget_content_description">TMSearch Top 10 Popular Movies</string>
     <string name="appwidget_text">Top 10 Popular Movies</string>
+
+    <!--AlertDialog-->
+    <string name="alert_api_key_title">Api key not found</string>
+    <string name="alert_api_key_message">You need a key to The Movie Db Api to continue. Please, insert it in configurations screen.</string>
+    <string name="alert_api_key_btn_pos">Ok</string>
+    <string name="exit_confirmation_title">Confirmation</string>
+    <string name="exit_confirmation_message">Are you sure you want to exit?</string>
+    <string name="exit_confirmation_pos">Yes</string>
+    <string name="exit_confirmation_neg">No</string>
 
 </resources>

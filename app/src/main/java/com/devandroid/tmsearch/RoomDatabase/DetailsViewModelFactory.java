@@ -2,6 +2,7 @@ package com.devandroid.tmsearch.RoomDatabase;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
 public class DetailsViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
@@ -13,8 +14,9 @@ public class DetailsViewModelFactory extends ViewModelProvider.NewInstanceFactor
         this.movieId = movieId;
     }
 
+    @NonNull
     @Override
-    public <T extends ViewModel> T create(Class<T> modelClass) {
+    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         return (T) new DetailsViewModel(mDb, movieId);
     }
 }

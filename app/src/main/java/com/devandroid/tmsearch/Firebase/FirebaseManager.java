@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
+import com.devandroid.tmsearch.Network.Network;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
@@ -20,6 +21,11 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +34,9 @@ import java.util.List;
 public final class FirebaseManager {
 
     private static FirebaseAuth mAuth;
+
+    private static DatabaseReference mDb;
+
     private static FirebaseAnalytics mAnalytics;
     private static List<mListener> mListeners;
 
@@ -41,9 +50,10 @@ public final class FirebaseManager {
         NOW_LAYING_MENU("6", "now_playing_menu", "action"),
         UPCOMING_MENU("7", "upcoming_menu", "action"),
         FAVORITES_MENU("8", "favorites_menu", "action"),
-        EXIT_MENU("9", "exit_menu", "action"),
-        MOVIE_CLICK_LIST("10", "movie_click_list", "action"),
-        TRAILER_CLICK_LIST("11", "trailer_click_list", "action");
+        CONFIG_MENU("9", "config_menu", "action"),
+        EXIT_MENU("10", "exit_menu", "action"),
+        MOVIE_CLICK_LIST("11", "movie_click_list", "action"),
+        TRAILER_CLICK_LIST("12", "trailer_click_list", "action");
 
         public String mId;
         public String mName;
@@ -61,9 +71,22 @@ public final class FirebaseManager {
      */
     public static void FirebaseManagerInit(Context context) {
 
+        /**
+         * listener reference
+         */
+        mListeners = new ArrayList<>();
+        /**
+         * Firebase authentication reference
+         */
         mAuth = FirebaseAuth.getInstance();
+        /**
+         * Firebase analytics reference
+         */
         mAnalytics = FirebaseAnalytics.getInstance(context);
-        mListeners = new ArrayList();
+        /**
+         * Firebase database reference
+         */
+        mDb = FirebaseDatabase.getInstance().getReference();
 
     }
 
@@ -135,6 +158,12 @@ public final class FirebaseManager {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+
+                        /**
+                         * once the login was done, retrieve ApiKey from firebase database
+                         */
+                        FirebaseDatabaseRestoreApiKey();
+
                         for (mListener events : mListeners) events.mListenerSignInSuccessful();
                     } else {
                         String erroExcecao = "";
@@ -292,6 +321,63 @@ public final class FirebaseManager {
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, eventKey.mName);
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, eventKey.mContentType);
         mAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+    }
+
+    /**
+     * Retrieve data from Firebase database
+     */
+    public static void FirebaseDatabaseRestoreApiKey() {
+
+        mDb.child("users").child(FirebaseAuthGetUserId()).child("ApiKey").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+
+                /**
+                 * restore the api key
+                 */
+                String strApiKey = dataSnapshot.getValue() != null ? (String)dataSnapshot.getValue() : "";
+                Network.setApiKey(strApiKey);
+                for (mListener events : mListeners) events.mListenerDatabaseGetApiKey(strApiKey);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                for (mListener events : mListeners) events.mListenerDatabaseGetApiKey("");
+            }
+        });
+
+    }
+
+    /**
+     * Store data in Firebase database
+     */
+    public static void FirebaseDatabaseSetApiKey(Activity activity, String strApiKey) {
+        try{
+            mDb.child("users").child(FirebaseAuthGetUserId()).child("ApiKey").setValue(strApiKey).addOnCompleteListener(activity, new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        for (mListener events : mListeners) events.mListenerDatabaseSetApiKeySuccessful();
+                    }
+                    else {
+                        String erroExcecao = ErrorCodes.FirebaseDbSetApiKeyError;
+                        try {
+                            throw task.getException();
+                        } catch (Exception e) {
+                            erroExcecao = ErrorCodes.FirebaseDbSetApiKeyError + e.getMessage();
+                            e.printStackTrace();
+                        }
+                        for (mListener events : mListeners) events.mListenerDatabaseSetApiKeyFail(erroExcecao);
+                    }
+                }
+            });
+        }catch (Exception e) {
+            for (mListener events : mListeners) events.mListenerDatabaseSetApiKeyFail(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 }

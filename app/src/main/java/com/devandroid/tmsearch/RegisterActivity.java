@@ -11,7 +11,6 @@ import android.widget.Toast;
 import com.devandroid.tmsearch.Firebase.ErrorCodes;
 import com.devandroid.tmsearch.Firebase.FirebaseManager;
 import com.devandroid.tmsearch.Firebase.mListener;
-import com.devandroid.tmsearch.Preferences.Preferences;
 import com.devandroid.tmsearch.Util.Utils;
 
 public class RegisterActivity extends AppCompatActivity implements mListener {
@@ -28,7 +27,6 @@ public class RegisterActivity extends AppCompatActivity implements mListener {
     private EditText mEtNameFieldInput;
     private EditText mEtEmailFieldInput;
     private EditText mEtPasswordFieldInput;
-    private EditText mEtTmdbApiKeyFieldInput;
     private Button mBtnRegister;
 
     @Override
@@ -40,26 +38,12 @@ public class RegisterActivity extends AppCompatActivity implements mListener {
         mEtNameFieldInput = findViewById(R.id.etNameFieldInput);
         mEtEmailFieldInput = findViewById(R.id.etEmailFieldInput);
         mEtPasswordFieldInput = findViewById(R.id.etPasswordFieldInput);
-        mEtTmdbApiKeyFieldInput = findViewById(R.id.etTmdbKeyFieldInput);
         mBtnRegister = findViewById(R.id.btnRegister);
-
-        /*
-        final Toolbar toolbar = findViewById(R.id.Toolbar);
-        toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_white_24);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setTitle(getString(R.string.ActivityRegister_toolbarTitle));
-        toolbar.setTitleTextColor(getColor(R.color.clLightTextColor));
-        toolbar.setBackgroundColor(getColor(R.color.clSelectedBackground));
-        */
 
         /**
          * subscribe firebase auth listener
          */
         FirebaseManager.addListener(RegisterActivity.this);
-
-        String strTmdbApiKey = Preferences.restoreStringTmdbApiKey(RegisterActivity.this);
-        mEtTmdbApiKeyFieldInput.setText(strTmdbApiKey);
 
         mIvBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,11 +55,6 @@ public class RegisterActivity extends AppCompatActivity implements mListener {
         mBtnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                String strApiKey = mEtTmdbApiKeyFieldInput.getText().toString();
-                if(!strApiKey.isEmpty()) {
-                    Preferences.saveStringTmdbApiKey(RegisterActivity.this, strApiKey);
-                }
 
                 startRegister();
                 FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.CREATE_ACCOUNT_BUTTON);
@@ -120,6 +99,14 @@ public class RegisterActivity extends AppCompatActivity implements mListener {
     @Override
     public void mListenerChangeCredentialsFail(String reason) {}
 
+    @Override
+    public void mListenerDatabaseSetApiKeySuccessful() {}
+
+    @Override
+    public void mListenerDatabaseSetApiKeyFail(String reason) {}
+
+    @Override
+    public void mListenerDatabaseGetApiKey(String key) {}
 
     private void startRegister() {
 

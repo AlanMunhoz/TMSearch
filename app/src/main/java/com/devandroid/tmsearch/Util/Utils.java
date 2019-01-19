@@ -1,8 +1,11 @@
 package com.devandroid.tmsearch.Util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -12,6 +15,7 @@ import com.devandroid.tmsearch.Firebase.ErrorCodes;
 public class Utils {
 
     private static ProgressDialog progressDialog;
+    private static AlertDialog alertDialog;
 
     /**
      * Check Email and Password in a EditText Field. Set error message in case of bad formatter.
@@ -69,6 +73,22 @@ public class Utils {
             progressDialog.dismiss();
             progressDialog=null;
         }
+    }
+
+    /**
+     * Start a AlertDialog
+     */
+    public static void AlertDialogStart(Activity activity, String strTitle, String strMessage, String strPositive, DialogInterface.OnClickListener posListener, String strNegative, DialogInterface.OnClickListener negListener){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(strTitle);
+        builder.setMessage(strMessage);
+        builder.setPositiveButton(strPositive, posListener);
+        if(!strNegative.isEmpty()) {
+            builder.setNegativeButton(strNegative, negListener);
+        }
+        alertDialog = builder.create();
+        alertDialog.show();
     }
 
     /**

@@ -3,6 +3,7 @@ package com.devandroid.tmsearch;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 
 import com.devandroid.tmsearch.Firebase.FirebaseManager;
+import com.devandroid.tmsearch.Firebase.mListener;
 import com.devandroid.tmsearch.Model.Movie;
 import com.devandroid.tmsearch.Model.MoviesRequest;
 import com.devandroid.tmsearch.Model.ReviewsRequest;
@@ -34,6 +36,7 @@ import com.devandroid.tmsearch.Network.Network;
 import com.devandroid.tmsearch.Preferences.Preferences;
 import com.devandroid.tmsearch.Retrofit.RetrofitClient;
 import com.devandroid.tmsearch.RoomDatabase.MainViewModel;
+import com.devandroid.tmsearch.Util.Utils;
 import com.devandroid.tmsearch.widget.WidgetService;
 
 import org.parceler.Parcels;
@@ -41,12 +44,16 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.internal.Util;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         RetrofitClient.listReceivedListenter,
         MovieAdapter.ListItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener,
+        mListener
+{
 
     /**
      * intent/bundle
@@ -135,6 +142,11 @@ public class MainActivity extends AppCompatActivity
         mRetrofitClient = new RetrofitClient(this);
 
         /**
+         * subscribe firebase auth listener
+         */
+        FirebaseManager.addListener(MainActivity.this);
+
+        /**
          * Setup recycler view, layout manager
          */
         LinearLayoutManager layoutManager = new GridLayoutManager(this, getNCardColumns(this));
@@ -155,8 +167,8 @@ public class MainActivity extends AppCompatActivity
         /**
          * Restoring The Movie Db Api Key from SharedPreferences
          */
-        String strTmdbApiKey = Preferences.restoreStringTmdbApiKey(MainActivity.this);
-        Network.setApiKey(strTmdbApiKey);
+        //String strTmdbApiKey = Preferences.restoreStringTmdbApiKey(MainActivity.this);
+        //Network.setApiKey(strTmdbApiKey);
 
         /**
          * Restore the search if exists and call request movies
@@ -166,20 +178,6 @@ public class MainActivity extends AppCompatActivity
             mMoviesRequest = Parcels.unwrap(savedInstanceState.getParcelable(INTRA_MAIN_ACT_MOVIE_REQUEST));
         }
 
-        /**
-         * if there is movieRequest show in list, otherwise request by first time
-         */
-        if(mLastSelection == FAVORITES) {
-            //showFavoriteList();
-        } else {
-            if(mMoviesRequest != null) {
-                showMovieList();
-            } else {
-                mLastSelection = MOST_POPULAR;
-                mSwipeRefresh.setRefreshing(true);
-                mRetrofitClient.getMostPopularRequest();
-            }
-        }
         setTitleActionBar();
 
         /**
@@ -191,6 +189,16 @@ public class MainActivity extends AppCompatActivity
         mTvNavHeaderName.setText(FirebaseManager.FirebaseAuthGetUserName());
         mTvNavHeaderEmail.setText(FirebaseManager.FirebaseAuthGetUserEmail());
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        /**
+         * unsubscribe firebase auth listener
+         */
+        FirebaseManager.removeListener(MainActivity.this);
     }
 
     @Override
@@ -250,10 +258,28 @@ public class MainActivity extends AppCompatActivity
                 FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.FAVORITES_MENU);
                 break;
 
+            case R.id.nav_config:
+                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.CONFIG_MENU);
+                startActivity(new Intent(MainActivity.this, ConfigActivity.class));
+                break;
+
             case R.id.nav_exit:
-                FirebaseManager.FirebaseAuthStartSignOut();
-                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.EXIT_MENU);
-                finish();
+
+                Utils.AlertDialogStart(this,
+                        getString(R.string.exit_confirmation_title),
+                        getString(R.string.exit_confirmation_message),
+                        getString(R.string.exit_confirmation_pos),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                FirebaseManager.FirebaseAuthStartSignOut();
+                                FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.EXIT_MENU);
+                                finish();
+                            }
+                        },
+                        getString(R.string.exit_confirmation_neg),
+                        null
+                        );
+
                 break;
 
             default:
@@ -284,10 +310,8 @@ public class MainActivity extends AppCompatActivity
         /**
          * Write list
          */
-        if(moviesRequest!=null) {
-            mMoviesRequest = moviesRequest;
-            showMovieList();
-        }
+        mMoviesRequest = moviesRequest;
+        showMovieList();
 
 
         /**
@@ -349,6 +373,61 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
+
+    @Override
+    public void mListenerSignInSuccessful() { }
+
+    @Override
+    public void mListenerSignInFail(String reason) { }
+
+    @Override
+    public void mListenerRegisterSuccessful() { }
+
+    @Override
+    public void mListenerRegisterFail(String reason) { }
+
+    @Override
+    public void mListenerChangeCredentialsSuccessful() {}
+
+    @Override
+    public void mListenerChangeCredentialsFail(String reason) {}
+
+    @Override
+    public void mListenerDatabaseSetApiKeySuccessful() {}
+
+    @Override
+    public void mListenerDatabaseSetApiKeyFail(String reason) {}
+
+    @Override
+    public void mListenerDatabaseGetApiKey(String key) {
+
+        if(key.equals("")) {
+            Utils.AlertDialogStart(this,
+                    getString(R.string.alert_api_key_title),
+                    getString(R.string.alert_api_key_message),
+                    getString(R.string.alert_api_key_btn_pos),
+                    null,
+                    "",
+                    null);
+        }
+
+        /**
+         * if there is movieRequest show in list, otherwise request by first time
+         */
+        if(mLastSelection == FAVORITES) {
+            //showFavoriteList();
+        } else {
+            if(mMoviesRequest != null) {
+                showMovieList();
+            } else {
+                mLastSelection = MOST_POPULAR;
+                mSwipeRefresh.setRefreshing(true);
+                mRetrofitClient.getMostPopularRequest();
+            }
+        }
+
+    }
+
 
     private void setTitleActionBar() {
 
@@ -435,6 +514,8 @@ public class MainActivity extends AppCompatActivity
 
     private void startWidgetService()
     {
+
+        if(mMoviesRequest==null) return;
 
         Preferences.saveStringMovie(this, getString(R.string.appwidget_text));
         ArrayList<String> lstMovies = new ArrayList<>();

@@ -17,6 +17,7 @@ public final class ErrorCodes {
     public static String FirebaseNetworkException = "Erro ao conectar com servidor, por favor verifique sua conexão com a internet e tente novamente.";
     public static String FirebaseAuthChangeEmailError = "Não foi possível alterar o email.";
     public static String FirebaseAuthChangePasswordError = "Não foi possível alterar a senha.";
+    public static String FirebaseDbSetApiKeyError = "Não foi possível persistir a chave da API.";
 
     /**
      * Form Errors
@@ -31,5 +32,6 @@ public final class ErrorCodes {
      */
     public static String ProgressBarAnimationSignInUser = "Acessando sua conta...";
     public static String ProgressBarAnimationCreatingUser = "Criando usuário...";
+    public static String ProgressBarAnimationChangingConfigs = "Alterando configurações...";
 
 }

@@ -8,5 +8,8 @@ public interface mListener {
     void mListenerRegisterFail(String reason);
     void mListenerChangeCredentialsSuccessful();
     void mListenerChangeCredentialsFail(String reason);
+    void mListenerDatabaseSetApiKeySuccessful();
+    void mListenerDatabaseSetApiKeyFail(String reason);
+    void mListenerDatabaseGetApiKey(String key);
 
 }

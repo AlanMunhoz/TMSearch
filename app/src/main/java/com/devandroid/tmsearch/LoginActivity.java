@@ -54,6 +54,7 @@ public class LoginActivity extends AppCompatActivity implements mListener {
 
         if(FirebaseManager.FirebaseAuthIsLoggedIn()) {
 
+            FirebaseManager.FirebaseDatabaseRestoreApiKey();
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
 
@@ -115,6 +116,16 @@ public class LoginActivity extends AppCompatActivity implements mListener {
 
     @Override
     public void mListenerChangeCredentialsFail(String reason) {}
+
+    @Override
+    public void mListenerDatabaseSetApiKeySuccessful() {}
+
+    @Override
+    public void mListenerDatabaseSetApiKeyFail(String reason) {}
+
+    @Override
+    public void mListenerDatabaseGetApiKey(String key) {}
+
 
     private void startSignIn() {
 
