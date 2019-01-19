@@ -34,6 +34,7 @@ import com.devandroid.tmsearch.Network.Network;
 import com.devandroid.tmsearch.Preferences.Preferences;
 import com.devandroid.tmsearch.Retrofit.RetrofitClient;
 import com.devandroid.tmsearch.RoomDatabase.MainViewModel;
+import com.devandroid.tmsearch.widget.WidgetService;
 
 import org.parceler.Parcels;
 
@@ -287,6 +288,14 @@ public class MainActivity extends AppCompatActivity
             mMoviesRequest = moviesRequest;
             showMovieList();
         }
+
+
+        /**
+         * Starts service
+         */
+        if(mLastSelection == MOST_POPULAR) {
+            startWidgetService();
+        }
     }
 
     @Override
@@ -422,5 +431,20 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    private void startWidgetService()
+    {
+
+        Preferences.saveStringMovie(this, getString(R.string.appwidget_text));
+        ArrayList<String> lstMovies = new ArrayList<>();
+        for(int i=0; i<10; i++) {
+            Movie movie = mMoviesRequest.getmMovies().get(i);
+            String strLine = "Score: " + movie.mStrPopularity + " " + "Title: " + movie.getmStrTitle();
+            lstMovies.add(strLine);
+        }
+        Preferences.saveStringList(this, lstMovies);
+
+        WidgetService.startUpdateWidget(this);
     }
 }

@@ -77,6 +77,7 @@ public class LoginActivity extends AppCompatActivity implements mListener {
         });
 
         Utils.clearAllFocus(this);
+
     }
 
     @Override

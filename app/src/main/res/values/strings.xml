@@ -47,4 +47,8 @@
     <!--activity_register-->
     <string name="ActivityRegister_toolbarTitle">Register</string>
 
+    <!--Widget-->
+    <string name="appwidget_content_description">TMSearch Top 10 Popular Movies</string>
+    <string name="appwidget_text">Top 10 Popular Movies</string>
+
 </resources>
