@@ -22,6 +22,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ListViewHold
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
+        void onListEndlessScroll();
     }
 
     MovieAdapter(ListItemClickListener listener) {
@@ -70,6 +71,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ListViewHold
         void bind(int listIndex) {
             Picasso.with(mContext).load(Network.URL_POSTER_SIZE_185PX(mListItems.get(listIndex).mStrPosterPath)).into(ivFigure);
 
+            /**
+             * The last element on the list generate callback to load more
+             */
+            if(listIndex == mListItems.size()-1) {
+                mOnClickListener.onListEndlessScroll();
+            }
         }
 
         @Override

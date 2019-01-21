@@ -13,16 +13,16 @@ import retrofit2.http.Query;
 public interface RetrofitInterface {
 
     @GET(Network.MOST_POPULAR_SEARCH)
-    Call<MoviesRequest> getMostPopularRequest(@Query("api_key") String apiKey);
+    Call<MoviesRequest> getMostPopularRequest(@Query("api_key") String apiKey, @Query("page") String page);
 
     @GET(Network.TOP_RATED_SEARCH)
-    Call<MoviesRequest> getTopRatedRequest(@Query("api_key") String apiKey);
+    Call<MoviesRequest> getTopRatedRequest(@Query("api_key") String apiKey, @Query("page") String page);
 
     @GET(Network.NOW_PLAYING_SEARCH)
-    Call<MoviesRequest> getNowPlayingRequest(@Query("api_key") String apiKey);
+    Call<MoviesRequest> getNowPlayingRequest(@Query("api_key") String apiKey, @Query("page") String page);
 
     @GET(Network.UPCOMING_SEARCH)
-    Call<MoviesRequest> getUpcomingRequest(@Query("api_key") String apiKey);
+    Call<MoviesRequest> getUpcomingRequest(@Query("api_key") String apiKey, @Query("page") String page);
 
     @GET(Network.SEARCH_MOVIE)
     Call<MoviesRequest> searchMovieRequest(@Query("api_key") String apiKey, @Query("query") String query);

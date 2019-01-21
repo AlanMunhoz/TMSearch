@@ -30,7 +30,7 @@ public class RetrofitClient {
         mListReceivedListenter = listener;
     }
 
-    public void getMostPopularRequest() {
+    public void getMostPopularRequest(String page) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Network.BASE_URL)
@@ -39,7 +39,7 @@ public class RetrofitClient {
 
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
-        retrofitInterface.getMostPopularRequest(Network.API_KEY).enqueue(new Callback<MoviesRequest>() {
+        retrofitInterface.getMostPopularRequest(Network.API_KEY, page).enqueue(new Callback<MoviesRequest>() {
             @Override
             public void onResponse(Call<MoviesRequest> call, Response<MoviesRequest> response) {
                 try {
@@ -60,7 +60,7 @@ public class RetrofitClient {
         });
     }
 
-    public void getTopRatedRequest() {
+    public void getTopRatedRequest(String page) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Network.BASE_URL)
@@ -69,7 +69,7 @@ public class RetrofitClient {
 
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
-        retrofitInterface.getTopRatedRequest(Network.API_KEY).enqueue(new Callback<MoviesRequest>() {
+        retrofitInterface.getTopRatedRequest(Network.API_KEY, page).enqueue(new Callback<MoviesRequest>() {
             @Override
             public void onResponse(Call<MoviesRequest> call, Response<MoviesRequest> response) {
                 try {
@@ -90,7 +90,7 @@ public class RetrofitClient {
         });
     }
 
-    public void getNowPlayingRequest() {
+    public void getNowPlayingRequest(String page) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Network.BASE_URL)
@@ -99,7 +99,7 @@ public class RetrofitClient {
 
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
-        retrofitInterface.getNowPlayingRequest(Network.API_KEY).enqueue(new Callback<MoviesRequest>() {
+        retrofitInterface.getNowPlayingRequest(Network.API_KEY, page).enqueue(new Callback<MoviesRequest>() {
             @Override
             public void onResponse(Call<MoviesRequest> call, Response<MoviesRequest> response) {
                 try {
@@ -120,7 +120,7 @@ public class RetrofitClient {
         });
     }
 
-    public void getUpcomingRequest() {
+    public void getUpcomingRequest(String page) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Network.BASE_URL)
@@ -129,7 +129,7 @@ public class RetrofitClient {
 
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
-        retrofitInterface.getUpcomingRequest(Network.API_KEY).enqueue(new Callback<MoviesRequest>() {
+        retrofitInterface.getUpcomingRequest(Network.API_KEY, page).enqueue(new Callback<MoviesRequest>() {
             @Override
             public void onResponse(Call<MoviesRequest> call, Response<MoviesRequest> response) {
                 try {
