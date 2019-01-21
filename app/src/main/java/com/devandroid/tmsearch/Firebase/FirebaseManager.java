@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import com.devandroid.tmsearch.Network.Network;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
@@ -38,7 +37,7 @@ public final class FirebaseManager {
     private static DatabaseReference mDb;
 
     private static FirebaseAnalytics mAnalytics;
-    private static List<mListener> mListeners;
+    private static List<FirebaseCallback> firebaseCallbacks;
 
     public enum EventKeys {
 
@@ -74,7 +73,7 @@ public final class FirebaseManager {
         /**
          * listener reference
          */
-        mListeners = new ArrayList<>();
+        firebaseCallbacks = new ArrayList<>();
         /**
          * Firebase authentication reference
          */
@@ -93,15 +92,15 @@ public final class FirebaseManager {
     /**
      * Add listener to object pass by parameter
      */
-    public static void addListener(mListener toAdd) {
-        mListeners.add(toAdd);
+    public static void addListener(FirebaseCallback toAdd) {
+        firebaseCallbacks.add(toAdd);
     }
 
     /**
      * Add listener to object pass by parameter
      */
-    public static void removeListener(mListener toAdd) {
-        mListeners.remove(toAdd);
+    public static void removeListener(FirebaseCallback toAdd) {
+        firebaseCallbacks.remove(toAdd);
     }
 
     /**
@@ -164,7 +163,7 @@ public final class FirebaseManager {
                          */
                         FirebaseDatabaseRestoreApiKey();
 
-                        for (mListener events : mListeners) events.mListenerSignInSuccessful();
+                        for (FirebaseCallback events : firebaseCallbacks) events.mListenerSignInSuccessful();
                     } else {
                         String erroExcecao = "";
                         try {
@@ -179,7 +178,7 @@ public final class FirebaseManager {
                             erroExcecao = ErrorCodes.FirebaseAuthGenericError /*+ e.getMessage()*/;
                             e.printStackTrace();
                         }
-                        for (mListener events : mListeners) events.mListenerSignInFail(erroExcecao);
+                        for (FirebaseCallback events : firebaseCallbacks) events.mListenerSignInFail(erroExcecao);
                     }
                 }
             });
@@ -213,7 +212,7 @@ public final class FirebaseManager {
                                 .setDisplayName(name).build();
                         user.updateProfile(profileUpdates);
 
-                        for (mListener events : mListeners) events.mListenerRegisterSuccessful();
+                        for (FirebaseCallback events : firebaseCallbacks) events.mListenerRegisterSuccessful();
                     }
                     else {
                         String erroExcecao="";
@@ -231,7 +230,7 @@ public final class FirebaseManager {
                             erroExcecao = ErrorCodes.FirebaseAuthGenericErrorCreateUser /*+ e.getMessage()*/;
                             e.printStackTrace();
                         }
-                        for (mListener events : mListeners) events.mListenerRegisterFail(erroExcecao);
+                        for (FirebaseCallback events : firebaseCallbacks) events.mListenerRegisterFail(erroExcecao);
                     }
                 }
             });
@@ -279,14 +278,14 @@ public final class FirebaseManager {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            for (mListener events : mListeners) events.mListenerChangeCredentialsSuccessful();
+                                            for (FirebaseCallback events : firebaseCallbacks) events.mListenerChangeCredentialsSuccessful();
                                         }else {
-                                            for (mListener events : mListeners) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangePasswordError);
+                                            for (FirebaseCallback events : firebaseCallbacks) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangePasswordError);
                                         }
                                     }
                                 });
                             }else {
-                                for (mListener events : mListeners) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangeEmailError);
+                                for (FirebaseCallback events : firebaseCallbacks) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangeEmailError);
                             }
                         }
                     });
@@ -298,7 +297,7 @@ public final class FirebaseManager {
                         erroExcecao = ErrorCodes.FirebaseAuthReauthenticateGenericError + e.getMessage();
                         e.printStackTrace();
                     }
-                    for (mListener events : mListeners) events.mListenerSignInFail(erroExcecao);
+                    for (FirebaseCallback events : firebaseCallbacks) events.mListenerSignInFail(erroExcecao);
                 }
             }
         });
@@ -334,18 +333,15 @@ public final class FirebaseManager {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
 
-                /**
-                 * restore the api key
-                 */
                 String strApiKey = dataSnapshot.getValue() != null ? (String)dataSnapshot.getValue() : "";
-                Network.setApiKey(strApiKey);
-                for (mListener events : mListeners) events.mListenerDatabaseGetApiKey(strApiKey);
+
+                for (FirebaseCallback events : firebaseCallbacks) events.mListenerDatabaseGetApiKey(strApiKey);
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                for (mListener events : mListeners) events.mListenerDatabaseGetApiKey("");
+                for (FirebaseCallback events : firebaseCallbacks) events.mListenerDatabaseGetApiKey("");
             }
         });
 
@@ -360,7 +356,7 @@ public final class FirebaseManager {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
-                        for (mListener events : mListeners) events.mListenerDatabaseSetApiKeySuccessful();
+                        for (FirebaseCallback events : firebaseCallbacks) events.mListenerDatabaseSetApiKeySuccessful();
                     }
                     else {
                         String erroExcecao = ErrorCodes.FirebaseDbSetApiKeyError;
@@ -370,12 +366,12 @@ public final class FirebaseManager {
                             erroExcecao = ErrorCodes.FirebaseDbSetApiKeyError + e.getMessage();
                             e.printStackTrace();
                         }
-                        for (mListener events : mListeners) events.mListenerDatabaseSetApiKeyFail(erroExcecao);
+                        for (FirebaseCallback events : firebaseCallbacks) events.mListenerDatabaseSetApiKeyFail(erroExcecao);
                     }
                 }
             });
         }catch (Exception e) {
-            for (mListener events : mListeners) events.mListenerDatabaseSetApiKeyFail(e.getMessage());
+            for (FirebaseCallback events : firebaseCallbacks) events.mListenerDatabaseSetApiKeyFail(e.getMessage());
             e.printStackTrace();
         }
     }

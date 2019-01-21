@@ -18,16 +18,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.devandroid.tmsearch.Firebase.FirebaseManager;
-import com.devandroid.tmsearch.Firebase.mListener;
+import com.devandroid.tmsearch.Firebase.FirebaseCallback;
 import com.devandroid.tmsearch.Model.Movie;
 import com.devandroid.tmsearch.Model.MoviesRequest;
 import com.devandroid.tmsearch.Model.ReviewsRequest;
@@ -44,15 +47,13 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.internal.Util;
-
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         RetrofitClient.listReceivedListenter,
         MovieAdapter.ListItemClickListener,
         SwipeRefreshLayout.OnRefreshListener,
-        mListener
+        FirebaseCallback
 {
 
     /**
@@ -60,7 +61,9 @@ public class MainActivity extends AppCompatActivity
      */
     public static final String EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE = "extra_main_act_detail_act_movie";
     private static final String INTRA_MAIN_ACT_LAST_SELECTION = "intra_main_act_last_selection";
+    private static final String INTRA_MAIN_ACT_CURRENT_SELECTION = "intra_main_act_current_selection";
     private static final String INTRA_MAIN_ACT_MOVIE_REQUEST = "intra_main_act_movie_request";
+    private static final String INTRA_MAIN_ACT_SEARCH_QUERY = "intra_main_act_search_query";
 
     /**
      * Constants
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity
     private static final int NOW_PLAYING = 2;
     private static final int UPCOMING = 3;
     private static final int FAVORITES = 4;
+    private static final int SEARCH_MOVIE = 5;
 
     /**
      * UI components
@@ -92,7 +96,9 @@ public class MainActivity extends AppCompatActivity
     private RetrofitClient mRetrofitClient;
     private MovieAdapter mAdapter;
     private MoviesRequest mMoviesRequest;
+    private String mLastSearchQuery;
     private int mLastSelection = MOST_POPULAR;
+    private int mCurrentSelection = MOST_POPULAR;
     private ArrayList<Movie> mLstFavoriteMovies;
 
 
@@ -165,20 +171,26 @@ public class MainActivity extends AppCompatActivity
         addLiveDataObserver();
 
         /**
-         * Restoring The Movie Db Api Key from SharedPreferences
-         */
-        //String strTmdbApiKey = Preferences.restoreStringTmdbApiKey(MainActivity.this);
-        //Network.setApiKey(strTmdbApiKey);
-
-        /**
-         * Restore the search if exists and call request movies
+         * Restore the search if exists
          */
         if (savedInstanceState != null) {
+
             mLastSelection = savedInstanceState.getInt(INTRA_MAIN_ACT_LAST_SELECTION);
+            mCurrentSelection = savedInstanceState.getInt(INTRA_MAIN_ACT_CURRENT_SELECTION);
+
+            if(mCurrentSelection==SEARCH_MOVIE) {
+                mCurrentSelection = mLastSelection;
+                onUpdateRequest();
+            }
+
+            mLastSearchQuery = savedInstanceState.getString(INTRA_MAIN_ACT_SEARCH_QUERY);
             mMoviesRequest = Parcels.unwrap(savedInstanceState.getParcelable(INTRA_MAIN_ACT_MOVIE_REQUEST));
         }
 
-        setTitleActionBar();
+        /**
+         * Set Title actionbar and adapter with list movies
+         */
+        showMovieList();
 
         /**
          * Set navigation view select with the first one
@@ -189,6 +201,13 @@ public class MainActivity extends AppCompatActivity
         mTvNavHeaderName.setText(FirebaseManager.FirebaseAuthGetUserName());
         mTvNavHeaderEmail.setText(FirebaseManager.FirebaseAuthGetUserEmail());
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Utils.AlertDialogDismiss();
     }
 
     @Override
@@ -208,8 +227,74 @@ public class MainActivity extends AppCompatActivity
         /**
          * Store the last search did by user
          */
+        outState.putInt(INTRA_MAIN_ACT_CURRENT_SELECTION, mCurrentSelection);
         outState.putInt(INTRA_MAIN_ACT_LAST_SELECTION, mLastSelection);
+        outState.putString(INTRA_MAIN_ACT_SEARCH_QUERY, mLastSearchQuery);
         outState.putParcelable(INTRA_MAIN_ACT_MOVIE_REQUEST, Parcels.wrap(mMoviesRequest));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        /**
+         * capturing reference of searchView
+         */
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        /**
+         * customizing searchView
+         */
+        EditText searchEditText = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getColor(R.color.clLightTextColor));
+        searchEditText.setHintTextColor(getColor(R.color.clLightTextColor));
+        searchEditText.setHint("Search");
+        searchEditText.setHintTextColor(getColor(R.color.colorSearchViewHint));
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+
+                restoreLastSelection();
+                onUpdateRequest();
+                return true;
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+
+                if(!query.isEmpty()) {
+                    mLastSearchQuery = query;
+                    changeSelection(SEARCH_MOVIE);
+                    onUpdateRequest();
+                }
+                return false;
+            }
+        });
+
+        /*
+        if(mCurrentSelection == SEARCH_MOVIE) {
+            searchItem.expandActionView();
+            searchEditText.setText(mLastSearchQuery);
+        }
+        */
+
+        return true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -221,40 +306,32 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
 
             case R.id.nav_most_popular:
-                mLastSelection = MOST_POPULAR;
-                mSwipeRefresh.setRefreshing(true);
-                mRetrofitClient = new RetrofitClient(this);
-                mRetrofitClient.getMostPopularRequest();
+                changeSelection(MOST_POPULAR);
+                onUpdateRequest();
                 FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.MOST_POPULAR_MENU);
                 break;
 
             case R.id.nav_top_rated:
-                mLastSelection = TOP_RATED;
-                mSwipeRefresh.setRefreshing(true);
-                mRetrofitClient = new RetrofitClient(this);
-                mRetrofitClient.getTopRatedRequest();
+                changeSelection(TOP_RATED);
+                onUpdateRequest();
                 FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.TOP_RATED_MENU);
                 break;
 
             case R.id.nav_now_playing:
-                mLastSelection = NOW_PLAYING;
-                mSwipeRefresh.setRefreshing(true);
-                mRetrofitClient = new RetrofitClient(this);
-                mRetrofitClient.getNowPlayingRequest();
+                changeSelection(NOW_PLAYING);
+                onUpdateRequest();
                 FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.NOW_LAYING_MENU);
                 break;
 
             case R.id.nav_upcoming:
-                mLastSelection = UPCOMING;
-                mSwipeRefresh.setRefreshing(true);
-                mRetrofitClient = new RetrofitClient(this);
-                mRetrofitClient.getUpcomingRequest();
+                changeSelection(UPCOMING);
+                onUpdateRequest();
                 FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.UPCOMING_MENU);
                 break;
 
             case R.id.nav_favorites:
-                mLastSelection = FAVORITES;
-                showMovieList();
+                changeSelection(FAVORITES);
+                onUpdateRequest();
                 FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.FAVORITES_MENU);
                 break;
 
@@ -265,7 +342,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.nav_exit:
 
-                Utils.AlertDialogStart(this,
+                Utils.AlertDialogStart(MainActivity.this,
                         getString(R.string.exit_confirmation_title),
                         getString(R.string.exit_confirmation_message),
                         getString(R.string.exit_confirmation_pos),
@@ -273,12 +350,13 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface arg0, int arg1) {
                                 FirebaseManager.FirebaseAuthStartSignOut();
                                 FirebaseManager.FirebaseAnalyticsLogEvent(FirebaseManager.EventKeys.EXIT_MENU);
+                                Utils.AlertDialogDismiss();
                                 finish();
                             }
                         },
                         getString(R.string.exit_confirmation_neg),
                         null
-                        );
+                );
 
                 break;
 
@@ -286,7 +364,6 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        setTitleActionBar();
         mDrawer.closeDrawer(GravityCompat.START);
 
         return true;
@@ -294,6 +371,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -317,7 +395,7 @@ public class MainActivity extends AppCompatActivity
         /**
          * Starts service
          */
-        if(mLastSelection == MOST_POPULAR) {
+        if(mCurrentSelection == MOST_POPULAR) {
             startWidgetService();
         }
     }
@@ -332,7 +410,6 @@ public class MainActivity extends AppCompatActivity
     public void loadFailure() {
 
         mSwipeRefresh.setRefreshing(false);
-
     }
 
     @Override
@@ -342,7 +419,7 @@ public class MainActivity extends AppCompatActivity
 
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
 
-        if(mLastSelection == FAVORITES) {
+        if(mCurrentSelection == FAVORITES) {
             intent.putExtra(EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE, Parcels.wrap(mLstFavoriteMovies.get(clickedItemIndex)));
         } else {
             intent.putExtra(EXTRA_MAIN_ACT_DETAIL_ACT_MOVIE, Parcels.wrap(mMoviesRequest.getItem(clickedItemIndex)));
@@ -354,24 +431,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRefresh() {
 
-        mRetrofitClient = new RetrofitClient(this);
-        switch (mLastSelection) {
-            case MOST_POPULAR:
-                mRetrofitClient.getMostPopularRequest();
-                break;
-            case TOP_RATED:
-                mRetrofitClient.getTopRatedRequest();
-                break;
-            case NOW_PLAYING:
-                mRetrofitClient.getNowPlayingRequest();
-                break;
-            case UPCOMING:
-                mRetrofitClient.getUpcomingRequest();
-                break;
-            case FAVORITES:
-                mSwipeRefresh.setRefreshing(false);
-                break;
-        }
+        onUpdateRequest();
     }
 
     @Override
@@ -401,78 +461,114 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void mListenerDatabaseGetApiKey(String key) {
 
-        if(key.equals("")) {
-            Utils.AlertDialogStart(this,
-                    getString(R.string.alert_api_key_title),
-                    getString(R.string.alert_api_key_message),
-                    getString(R.string.alert_api_key_btn_pos),
-                    null,
-                    "",
-                    null);
-        }
+        /**
+         * restore the api key
+         */
+        Network.setApiKey(key);
 
         /**
-         * if there is movieRequest show in list, otherwise request by first time
+         * request movies
          */
-        if(mLastSelection == FAVORITES) {
-            //showFavoriteList();
-        } else {
-            if(mMoviesRequest != null) {
-                showMovieList();
-            } else {
-                mLastSelection = MOST_POPULAR;
-                mSwipeRefresh.setRefreshing(true);
-                mRetrofitClient.getMostPopularRequest();
-            }
-        }
+        onUpdateRequest();
 
     }
 
+    private void onUpdateRequest() {
 
-    private void setTitleActionBar() {
-
-        if(mActionBar != null) {
-
-            switch (mLastSelection) {
-
-                case MOST_POPULAR:
-                    mActionBar.setTitle(getString(R.string.most_popular_title));
-                    break;
-
-                case TOP_RATED:
-                    mActionBar.setTitle(getString(R.string.top_rated_title));
-                    break;
-
-                case NOW_PLAYING:
-                    mActionBar.setTitle(getString(R.string.now_playing_title));
-                    break;
-
-                case UPCOMING:
-                    mActionBar.setTitle(getString(R.string.upcoming_title));
-                    break;
-
-                case FAVORITES:
-                    mActionBar.setTitle(getString(R.string.favorites_title));
-                    break;
-
-                default:
-                    mActionBar.setTitle(getString(R.string.most_popular_title));
-                    break;
+        /**
+         * Favorites doesn't need to do any request
+         */
+        if(mCurrentSelection!=FAVORITES) {
+            if (Network.API_KEY.equals("")) {
+                Utils.AlertDialogStart(this,
+                        getString(R.string.alert_api_key_title),
+                        getString(R.string.alert_api_key_message),
+                        getString(R.string.alert_api_key_btn_pos),
+                        null,
+                        "",
+                        null);
             }
         }
+
+        switch (mCurrentSelection) {
+            case MOST_POPULAR:
+                mActionBar.setTitle(getString(R.string.most_popular_title));
+                mSwipeRefresh.setRefreshing(true);
+                mRetrofitClient.getMostPopularRequest();
+                break;
+            case TOP_RATED:
+                mActionBar.setTitle(getString(R.string.top_rated_title));
+                mSwipeRefresh.setRefreshing(true);
+                mRetrofitClient.getTopRatedRequest();
+                break;
+            case NOW_PLAYING:
+                mActionBar.setTitle(getString(R.string.now_playing_title));
+                mSwipeRefresh.setRefreshing(true);
+                mRetrofitClient.getNowPlayingRequest();
+                break;
+            case UPCOMING:
+                mActionBar.setTitle(getString(R.string.upcoming_title));
+                mSwipeRefresh.setRefreshing(true);
+                mRetrofitClient.getUpcomingRequest();
+                break;
+            case FAVORITES:
+                mActionBar.setTitle(getString(R.string.favorites_title));
+                showMovieList();
+                mSwipeRefresh.setRefreshing(false);
+                break;
+            case SEARCH_MOVIE:
+                mActionBar.setTitle(getString(R.string.search_title) + ": \"" +mLastSearchQuery + "\"");
+                mSwipeRefresh.setRefreshing(true);
+                mRetrofitClient = new RetrofitClient(MainActivity.this);
+                mRetrofitClient.searchMovieRequest(mLastSearchQuery);
+                break;
+        }
+    }
+
+    private void changeSelection(int selection) {
+
+        if(selection!=mCurrentSelection) {
+            mLastSelection = mCurrentSelection;
+            mCurrentSelection = selection;
+        }
+    }
+
+    private void restoreLastSelection() {
+
+        mCurrentSelection = mLastSelection;
     }
 
     private void showMovieList() {
 
-        if(mLastSelection == FAVORITES) {
-            mAdapter.setListAdapter(mLstFavoriteMovies);
-        } else {
-            if (mMoviesRequest != null) {
-                mAdapter.setListAdapter(mMoviesRequest.getmMovies());
-            } else {
-                mAdapter.setListAdapter(new ArrayList<Movie>());
-            }
+        ArrayList<Movie> lstMovie = new ArrayList<>();
+        switch (mCurrentSelection) {
+            case MOST_POPULAR:
+                mActionBar.setTitle(getString(R.string.most_popular_title));
+                lstMovie = mMoviesRequest!=null ? mMoviesRequest.getmMovies() : new ArrayList<Movie>();
+                break;
+            case TOP_RATED:
+                mActionBar.setTitle(getString(R.string.top_rated_title));
+                lstMovie = mMoviesRequest!=null ? mMoviesRequest.getmMovies() : new ArrayList<Movie>();
+                break;
+            case NOW_PLAYING:
+                mActionBar.setTitle(getString(R.string.now_playing_title));
+                lstMovie = mMoviesRequest!=null ? mMoviesRequest.getmMovies() : new ArrayList<Movie>();
+                break;
+            case UPCOMING:
+                mActionBar.setTitle(getString(R.string.upcoming_title));
+                lstMovie = mMoviesRequest!=null ? mMoviesRequest.getmMovies() : new ArrayList<Movie>();
+                break;
+            case FAVORITES:
+                mActionBar.setTitle(getString(R.string.favorites_title));
+                lstMovie = mLstFavoriteMovies!=null ? mLstFavoriteMovies : new ArrayList<Movie>();
+                break;
+            case SEARCH_MOVIE:
+                mActionBar.setTitle(getString(R.string.search_title) + ": \"" +mLastSearchQuery + "\"");
+                lstMovie = mMoviesRequest!=null ? mMoviesRequest.getmMovies() : new ArrayList<Movie>();
+                break;
         }
+        mAdapter.setListAdapter(lstMovie);
+
     }
 
     /**
@@ -500,12 +596,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onChanged(@Nullable List<Movie> favoriteMovies) {
 
-                Log.d(MainViewModel.LOG_TAG, "onChanged DB");
+                Log.d(MainActivity.LOG_TAG, "onChanged DB");
                 mLstFavoriteMovies = new ArrayList<>();
-                for(int i=0;i<favoriteMovies.size();i++) {
-                    mLstFavoriteMovies.add(favoriteMovies.get(i));
-                }
-                if(mLastSelection == FAVORITES) {
+                mLstFavoriteMovies.addAll(favoriteMovies);
+                if(mCurrentSelection == FAVORITES) {
                     showMovieList();
                 }
             }

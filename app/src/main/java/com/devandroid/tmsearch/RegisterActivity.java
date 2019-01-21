@@ -10,10 +10,10 @@ import android.widget.Toast;
 
 import com.devandroid.tmsearch.Firebase.ErrorCodes;
 import com.devandroid.tmsearch.Firebase.FirebaseManager;
-import com.devandroid.tmsearch.Firebase.mListener;
+import com.devandroid.tmsearch.Firebase.FirebaseCallback;
 import com.devandroid.tmsearch.Util.Utils;
 
-public class RegisterActivity extends AppCompatActivity implements mListener {
+public class RegisterActivity extends AppCompatActivity implements FirebaseCallback {
 
     /**
      * Constants

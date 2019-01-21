@@ -7,16 +7,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.devandroid.tmsearch.Firebase.ErrorCodes;
 import com.devandroid.tmsearch.Firebase.FirebaseManager;
-import com.devandroid.tmsearch.Firebase.mListener;
+import com.devandroid.tmsearch.Firebase.FirebaseCallback;
 import com.devandroid.tmsearch.Network.Network;
 import com.devandroid.tmsearch.Util.Utils;
 
-public class ConfigActivity extends AppCompatActivity implements mListener {
+public class ConfigActivity extends AppCompatActivity implements FirebaseCallback {
 
     /**
      * Constants
@@ -48,7 +47,7 @@ public class ConfigActivity extends AppCompatActivity implements mListener {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.ActivityConfig_toolbarTitle));
         toolbar.setTitleTextColor(getColor(R.color.clLightTextColor));
-        toolbar.setBackgroundColor(getColor(R.color.clSelectedBackground));
+        toolbar.setBackgroundColor(getColor(R.color.colorPrimary));
 
 
         /**

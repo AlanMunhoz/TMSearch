@@ -211,4 +211,34 @@ public class RetrofitClient {
             }
         });
     }
+
+    public void searchMovieRequest(String strQuery) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Network.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+
+        retrofitInterface.searchMovieRequest(Network.API_KEY, strQuery).enqueue(new Callback<MoviesRequest>() {
+            @Override
+            public void onResponse(Call<MoviesRequest> call, Response<MoviesRequest> response) {
+                try {
+                    MoviesRequest moviesRequest = response.body();
+                    mListReceivedListenter.listReceived(moviesRequest);
+                    String elements = moviesRequest!=null ? Integer.toString(moviesRequest.getSize()) : "0";
+                    Log.d(LOG_TAG, "Load successful with " + elements + " elements!");
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MoviesRequest> call, Throwable t) {
+                mListReceivedListenter.loadFailure();
+                Log.d(LOG_TAG, "Retrofit load error");
+            }
+        });
+    }
 }

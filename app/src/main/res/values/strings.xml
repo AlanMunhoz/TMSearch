@@ -27,6 +27,8 @@
     <string name="upcoming_title">Upcoming</string>
     <string name="favorites_title">Favorites</string>
     <string name="exit_title">Exit</string>
+    <string name="search_title">Search Results for</string>
+    <string name="action_search">Search</string>
 
     <!-- activity_login -->
     <string name="ActivityLogin_editTextName">name</string>
@@ -34,7 +36,6 @@
     <string name="ActivityLogin_editTextPassword">password</string>
     <string name="ActivityLogin_editTextTmdbKey">The Movie DB Key</string>
     <string name="ActivityLogin_buttonLogin">Login</string>
-    <string name="ActivityLogin_buttonRegister">Create Account</string>
 
     <!--activity_detail-->
     <string name="vote_average_title">vote average</string>
@@ -47,9 +48,11 @@
     <string name="fab_content_description">Like</string>
 
     <!--activity_register-->
+    <string name="ActivityRegister_buttonRegister">Create Account</string>
     <string name="ActivityRegister_back_content_description">Back button</string>
 
     <!--activity_config-->
+    <string name="ActivityConfig_button_save">Save</string>
     <string name="ActivityConfig_toolbarTitle">Configuration</string>
 
     <!--Widget-->

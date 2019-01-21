@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.devandroid.tmsearch.Firebase.ErrorCodes;
 
@@ -89,6 +90,16 @@ public class Utils {
         }
         alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    /**
+     * Dismiss AlertDialog
+     */
+    public static void AlertDialogDismiss() {
+
+        if(alertDialog!=null) {
+            alertDialog.dismiss();
+        }
     }
 
     /**

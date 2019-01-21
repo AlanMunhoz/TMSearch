@@ -97,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="@string/ActivityLogin_buttonRegister"
+            android:text="@string/ActivityRegister_buttonRegister"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintEnd_toStartOf="@+id/guideline_right"
             map:layout_constraintStart_toStartOf="@+id/guideline_left" />

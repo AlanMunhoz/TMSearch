@@ -15,6 +15,7 @@ public final class Network {
     public static final String TOP_RATED_SEARCH = "movie/top_rated?";
     public static final String NOW_PLAYING_SEARCH = "movie/now_playing?";
     public static final String UPCOMING_SEARCH = "movie/upcoming?";
+    public static final String SEARCH_MOVIE = "search/movie?";
     public static final String VIDEOS_SEARCH = "movie/{id}/videos?";
     public static final String REVIEWS_SEARCH = "movie/{id}/reviews?";
 

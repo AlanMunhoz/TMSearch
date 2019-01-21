@@ -1,6 +1,6 @@
 package com.devandroid.tmsearch.Firebase;
 
-public interface mListener {
+public interface FirebaseCallback {
 
     void mListenerSignInSuccessful();
     void mListenerSignInFail(String reason);

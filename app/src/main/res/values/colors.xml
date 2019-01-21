@@ -15,6 +15,7 @@
     <color name="colorDrawerSelected">#d0d0d0</color>
     <color name="colorHeaderNameText">#ffffff</color>
     <color name="colorHeaderEmailText">#ffffff</color>
+    <color name="colorSearchViewHint">#80ffffff</color>
 
     <!--Login Screen-->
     <color name="colorEditText">#eaf2f3</color>
