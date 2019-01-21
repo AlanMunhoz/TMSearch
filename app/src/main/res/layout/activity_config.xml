@@ -38,9 +38,9 @@
             android:id="@+id/textInputName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
-            map:layout_constraintBottom_toTopOf="@+id/textInputEmail"
+            map:layout_constraintBottom_toTopOf="@+id/btnChangeName"
             map:layout_constraintEnd_toStartOf="@+id/guideline_right"
             map:layout_constraintStart_toStartOf="@+id/guideline_left"
             map:layout_constraintTop_toBottomOf="@+id/Toolbar">
@@ -56,12 +56,37 @@
                 android:paddingRight="10dp" />
         </android.support.design.widget.TextInputLayout>
 
+        <Button
+            android:id="@+id/btnChangeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@color/clSelectedBackground"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/ActivityConfig_button_save_name"
+            android:textAllCaps="false"
+            android:textColor="@color/colorTextColorButton"
+            map:layout_constraintBottom_toTopOf="@+id/div_name"
+            map:layout_constraintEnd_toStartOf="@+id/guideline_right" />
+
+        <View
+            android:id="@+id/div_name"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            map:layout_constraintBottom_toTopOf="@+id/textInputEmail"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintStart_toStartOf="parent" />
+
+
         <android.support.design.widget.TextInputLayout
             android:id="@+id/textInputEmail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            map:layout_constraintBottom_toTopOf="@+id/textInputLayout2"
+            map:layout_constraintBottom_toTopOf="@+id/textInputOldPassword"
             map:layout_constraintEnd_toStartOf="@+id/guideline_right"
             map:layout_constraintStart_toStartOf="@+id/guideline_left">
 
@@ -77,10 +102,78 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInputOldPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            map:layout_constraintBottom_toTopOf="@+id/textInputNewPassword"
+            map:layout_constraintEnd_toStartOf="@+id/guideline_right"
+            map:layout_constraintStart_toStartOf="@+id/guideline_left">
+
+            <EditText
+                android:id="@+id/etOldPasswordFieldInput"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/colorEditText"
+                android:hint="@string/ActivityLogin_editTextOldPassword"
+                android:inputType="textPassword"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInputNewPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            map:layout_constraintBottom_toTopOf="@+id/btnChangeEmail"
+            map:layout_constraintEnd_toStartOf="@+id/guideline_right"
+            map:layout_constraintStart_toStartOf="@+id/guideline_left">
+
+            <EditText
+                android:id="@+id/etNewPasswordFieldInput"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/colorEditText"
+                android:hint="@string/ActivityLogin_editTextNewPassword"
+                android:inputType="textPassword"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnChangeEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@color/clSelectedBackground"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/ActivityConfig_button_save_email"
+            android:textAllCaps="false"
+            android:textColor="@color/colorTextColorButton"
+            map:layout_constraintBottom_toTopOf="@+id/div_key"
+            map:layout_constraintEnd_toStartOf="@+id/guideline_right" />
+
+        <View
+            android:id="@+id/div_key"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            map:layout_constraintBottom_toTopOf="@+id/textInputLayout2"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintStart_toStartOf="parent" />
+
+        <android.support.design.widget.TextInputLayout
             android:id="@+id/textInputLayout2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             map:layout_constraintBottom_toTopOf="@+id/btnRegister"
             map:layout_constraintEnd_toStartOf="@+id/guideline_right"
             map:layout_constraintStart_toStartOf="@+id/guideline_left">
@@ -99,18 +192,17 @@
 
         <Button
             android:id="@+id/btnRegister"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="16dp"
             android:background="@color/clSelectedBackground"
-            android:text="@string/ActivityConfig_button_save"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/ActivityConfig_button_save_key"
             android:textAllCaps="false"
             android:textColor="@color/colorTextColorButton"
             map:layout_constraintBottom_toBottomOf="parent"
-            map:layout_constraintEnd_toStartOf="@+id/guideline_right"
-            map:layout_constraintStart_toStartOf="@+id/guideline_left" />
+            map:layout_constraintEnd_toStartOf="@+id/guideline_right" />
 
 
     </android.support.constraint.ConstraintLayout>

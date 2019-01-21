@@ -52,7 +52,11 @@
     <string name="ActivityRegister_back_content_description">Back button</string>
 
     <!--activity_config-->
-    <string name="ActivityConfig_button_save">Save</string>
+    <string name="ActivityConfig_button_save_name">Change User Name</string>
+    <string name="ActivityConfig_button_save_email">Change Credentials</string>
+    <string name="ActivityConfig_button_save_key">Change Api Key</string>
+    <string name="ActivityLogin_editTextOldPassword">old password</string>
+    <string name="ActivityLogin_editTextNewPassword">new password</string>
     <string name="ActivityConfig_toolbarTitle">Configuration</string>
 
     <!--Widget-->

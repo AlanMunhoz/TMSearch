@@ -1,6 +1,7 @@
 package com.devandroid.tmsearch;
 
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -27,8 +28,14 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
      */
     private EditText mEtNameFieldInput;
     private EditText mEtEmailFieldInput;
+    private TextInputLayout mTilOldPassword;
+    private EditText mEtOldPasswordFieldInput;
+    private TextInputLayout mTilNewPassword;
+    private EditText mEtNewPasswordFieldInput;
     private EditText mEtTmdbApiKeyFieldInput;
-    private Button mBtnRegister;
+    private Button mBtnChangeName;
+    private Button mBtnChangeApiKey;
+    private Button mBtnChangeEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +44,14 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
 
         mEtNameFieldInput = findViewById(R.id.etNameFieldInput);
         mEtEmailFieldInput = findViewById(R.id.etEmailFieldInput);
+        mTilOldPassword = findViewById(R.id.textInputOldPassword);
+        mEtOldPasswordFieldInput = findViewById(R.id.etOldPasswordFieldInput);
+        mTilNewPassword = findViewById(R.id.textInputNewPassword);
+        mEtNewPasswordFieldInput = findViewById(R.id.etNewPasswordFieldInput);
         mEtTmdbApiKeyFieldInput = findViewById(R.id.etTmdbKeyFieldInput);
-        mBtnRegister = findViewById(R.id.btnRegister);
+        mBtnChangeName = findViewById(R.id.btnChangeName);
+        mBtnChangeApiKey = findViewById(R.id.btnRegister);
+        mBtnChangeEmail = findViewById(R.id.btnChangeEmail);
 
 
         final Toolbar toolbar = findViewById(R.id.Toolbar);
@@ -59,15 +72,37 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
         mEtEmailFieldInput.setText(FirebaseManager.FirebaseAuthGetUserEmail());
         mEtTmdbApiKeyFieldInput.setText(Network.API_KEY);
 
-        mBtnRegister.setOnClickListener(new View.OnClickListener() {
+        mBtnChangeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                startRegister();
+                changeName();
+            }
+        });
+
+        mBtnChangeApiKey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                changeApiKey();
+            }
+        });
+
+        mBtnChangeEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeEmail();
             }
         });
 
         Utils.clearAllFocus(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Utils.AlertDialogDismiss();
     }
 
     @Override
@@ -78,7 +113,6 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
          * unsubscribe firebase auth listener
          */
         FirebaseManager.removeListener(ConfigActivity.this);
-
     }
 
     @Override
@@ -106,14 +140,22 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
     public void mListenerRegisterFail(String reason) { }
 
     @Override
-    public void mListenerChangeCredentialsSuccessful() {}
+    public void mListenerChangeCredentialsSuccessful() {
+        Utils.ProgressDialogStop();
+        Toast.makeText(this, "Config Successful", Toast.LENGTH_SHORT).show();
+    }
 
     @Override
-    public void mListenerChangeCredentialsFail(String reason) {}
+    public void mListenerChangeCredentialsFail(String reason) {
+        Utils.ProgressDialogStop();
+        Toast.makeText(this, "Oops! " + reason, Toast.LENGTH_LONG).show();
+    }
 
     @Override
     public void mListenerDatabaseSetApiKeySuccessful() {
         Utils.ProgressDialogStop();
+        mTilOldPassword.setVisibility(View.GONE);
+        mTilNewPassword.setVisibility(View.GONE);
         Toast.makeText(this, "Config Successful", Toast.LENGTH_SHORT).show();
     }
 
@@ -126,7 +168,7 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
     @Override
     public void mListenerDatabaseGetApiKey(String key) {}
 
-    private void startRegister() {
+    private void changeApiKey() {
 
         /**
          * store the ApiKey in Firebase database
@@ -134,5 +176,31 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
         String strApiKey = mEtTmdbApiKeyFieldInput.getText().toString();
         Utils.ProgressDialogStart(ConfigActivity.this, ErrorCodes.ProgressBarAnimationChangingConfigs);
         FirebaseManager.FirebaseDatabaseSetApiKey(ConfigActivity.this, strApiKey);
+
+    }
+
+    private void changeName() {
+
+        String name = mEtNameFieldInput.getText().toString();
+        FirebaseManager.FirebaseAuthChangeName(name);
+        Toast.makeText(ConfigActivity.this, "Config Successful", Toast.LENGTH_SHORT).show();
+    }
+
+    private void changeEmail() {
+
+        String email = mEtEmailFieldInput.getText().toString();
+        String oldPass = mEtOldPasswordFieldInput.getText().toString();
+        String newPass = mEtNewPasswordFieldInput.getText().toString();
+
+        if(oldPass.isEmpty() && newPass.isEmpty() && mTilOldPassword.getVisibility()==View.GONE) {
+            mTilOldPassword.setVisibility(View.VISIBLE);
+            mTilNewPassword.setVisibility(View.VISIBLE);
+        } else {
+            if(Utils.checkFormEmailOldNewPassword(email, mEtEmailFieldInput, oldPass, mEtOldPasswordFieldInput, newPass, mEtNewPasswordFieldInput)) {
+                Utils.ProgressDialogStart(ConfigActivity.this, ErrorCodes.ProgressBarAnimationChangingConfigs);
+                FirebaseManager.FirebaseAuthChangeUser(ConfigActivity.this, email, oldPass, newPass);
+            }
+        }
+
     }
 }

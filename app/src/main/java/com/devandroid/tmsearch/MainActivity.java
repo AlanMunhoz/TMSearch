@@ -194,13 +194,21 @@ public class MainActivity extends AppCompatActivity
 
         /**
          * Set navigation view select with the first one
-         * Set User Name and Email on header_layout of Navigation View
          */
         //mNavigationView.setCheckedItem(R.id.nav_most_popular);
         mNavigationView.getMenu().getItem(0).setChecked(true);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        /**
+         * Set User Name and Email on header_layout of Navigation View
+         */
         mTvNavHeaderName.setText(FirebaseManager.FirebaseAuthGetUserName());
         mTvNavHeaderEmail.setText(FirebaseManager.FirebaseAuthGetUserEmail());
-
     }
 
     @Override
@@ -442,7 +450,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListEndlessScroll() {
 
-        Log.d("21012019", "Endless scroll");
         onRequestMore();
     }
 
@@ -483,6 +490,11 @@ public class MainActivity extends AppCompatActivity
          * restore the api key
          */
         Network.setApiKey(key);
+
+        /**
+         * Clean all data movies
+         */
+        mLstMoviesRequest = new MoviesRequest[6];
 
         /**
          * request movies
@@ -681,7 +693,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onChanged(@Nullable List<Movie> favoriteMovies) {
 
-                Log.d(MainActivity.LOG_TAG, "onChanged DB");
+                Log.d(LOG_TAG, "onChanged DB");
                 mLstFavoriteMovies = new ArrayList<>();
                 mLstFavoriteMovies.addAll(favoriteMovies);
                 if(mCurrentSelection == FAVORITES) {

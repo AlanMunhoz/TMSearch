@@ -38,6 +38,27 @@ public class Utils {
         return ok;
     }
 
+    public static boolean checkFormEmailOldNewPassword(String email, EditText editTextEmail, String oldPassword, EditText editTextOldPassword, String newPassword, EditText editTextNewPassword)
+    {
+        boolean ok = true;
+        if (TextUtils.isEmpty(email)) {
+            editTextEmail.setError(ErrorCodes.EmailFieldEmptyError);
+            ok=false;
+        }else if(!email.contains("@")) {
+            editTextEmail.setError(ErrorCodes.EmailFieldMalFormedError);
+            ok=false;
+        }
+        if (TextUtils.isEmpty(oldPassword)) {
+            editTextOldPassword.setError(ErrorCodes.PasswordFieldEmptyError);
+            ok=false;
+        }
+        if (TextUtils.isEmpty(newPassword)) {
+            editTextNewPassword.setError(ErrorCodes.PasswordFieldEmptyError);
+            ok=false;
+        }
+        return ok;
+    }
+
     /**
      * Check Name, Email and Password in a EditText Field. Set error message in case of bad formatter.
      */

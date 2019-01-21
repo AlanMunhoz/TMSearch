@@ -148,6 +148,14 @@ public final class FirebaseManager {
         return strUserEmail;
     }
 
+    public static void FirebaseAuthChangeName(String name) {
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(name).build();
+        user.updateProfile(profileUpdates);
+    }
+
     /**
      * Make a sign in of a user
      */
@@ -207,10 +215,7 @@ public final class FirebaseManager {
                 {
                     if (task.isSuccessful()) {
 
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                .setDisplayName(name).build();
-                        user.updateProfile(profileUpdates);
+                        FirebaseAuthChangeName(name);
 
                         for (FirebaseCallback events : firebaseCallbacks) events.mListenerRegisterSuccessful();
                     }

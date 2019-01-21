@@ -279,7 +279,7 @@ public class DetailActivity extends AppCompatActivity
              */
             @Override
             public void onChanged(@Nullable List<Movie> favoriteMovies) {
-                Log.d(DetailsViewModel.LOG_TAG, "onChanged DB");
+                Log.d(LOG_TAG, "onChanged DB");
 
                 if(favoriteMovies!=null && favoriteMovies.size()>0) {
                     mFavoriteEntry = favoriteMovies.get(0);
