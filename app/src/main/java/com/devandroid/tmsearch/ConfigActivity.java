@@ -142,6 +142,8 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
     @Override
     public void mListenerChangeCredentialsSuccessful() {
         Utils.ProgressDialogStop();
+        mTilOldPassword.setVisibility(View.GONE);
+        mTilNewPassword.setVisibility(View.GONE);
         Toast.makeText(this, "Config Successful", Toast.LENGTH_SHORT).show();
     }
 
@@ -154,8 +156,6 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
     @Override
     public void mListenerDatabaseSetApiKeySuccessful() {
         Utils.ProgressDialogStop();
-        mTilOldPassword.setVisibility(View.GONE);
-        mTilNewPassword.setVisibility(View.GONE);
         Toast.makeText(this, "Config Successful", Toast.LENGTH_SHORT).show();
     }
 
