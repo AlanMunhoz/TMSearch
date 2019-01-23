@@ -22,16 +22,16 @@ public final class ErrorCodes {
     /**
      * Form Errors
      */
-    public static String EmailFieldEmptyError = "Obrigatório preenchimento de email.";
-    public static String EmailFieldMalFormedError = "Endereço de email mal formatado.";
-    public static String PasswordFieldEmptyError = "Obrigatório preenchimento de senha.";
-    public static String NameFieldEmptyError = "Obrigatório preenchimento de nome.";
+    public static String EmailFieldEmptyError = "Email required.";
+    public static String EmailFieldMalFormedError = "Email bad format.";
+    public static String PasswordFieldEmptyError = "Password required.";
+    public static String NameFieldEmptyError = "Name required.";
 
     /**
      * ProgressBar Messages
      */
-    public static String ProgressBarAnimationSignInUser = "Acessando sua conta...";
-    public static String ProgressBarAnimationCreatingUser = "Criando usuário...";
-    public static String ProgressBarAnimationChangingConfigs = "Alterando configurações...";
+    public static String ProgressBarAnimationSignInUser = "Login in your account...";
+    public static String ProgressBarAnimationCreatingUser = "Creating user...";
+    public static String ProgressBarAnimationChangingConfigs = "Changing configuraations...";
 
 }

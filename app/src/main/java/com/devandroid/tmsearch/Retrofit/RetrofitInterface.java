@@ -25,7 +25,7 @@ public interface RetrofitInterface {
     Call<MoviesRequest> getUpcomingRequest(@Query("api_key") String apiKey, @Query("page") String page);
 
     @GET(Network.SEARCH_MOVIE)
-    Call<MoviesRequest> searchMovieRequest(@Query("api_key") String apiKey, @Query("query") String query);
+    Call<MoviesRequest> searchMovieRequest(@Query("api_key") String apiKey, @Query("query") String query, @Query("page") String page);
 
     @GET(Network.VIDEOS_SEARCH)
     Call<VideosRequest> getVideosRequest(@Path("id") String id, @Query("api_key") String apiKey);

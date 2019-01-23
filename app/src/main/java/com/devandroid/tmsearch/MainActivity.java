@@ -212,13 +212,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        Utils.AlertDialogDismiss();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -226,6 +219,18 @@ public class MainActivity extends AppCompatActivity
          * unsubscribe firebase auth listener
          */
         FirebaseManager.removeListener(MainActivity.this);
+        Utils.AlertDialogDismiss();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            //super.onBackPressed();
+        }
     }
 
     @Override
@@ -258,19 +263,37 @@ public class MainActivity extends AppCompatActivity
         EditText searchEditText = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchEditText.setTextColor(getColor(R.color.clLightTextColor));
         searchEditText.setHintTextColor(getColor(R.color.clLightTextColor));
-        searchEditText.setHint("Search");
+        searchEditText.setHint(getString(R.string.search_hint));
         searchEditText.setHintTextColor(getColor(R.color.colorSearchViewHint));
 
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+
+                /**
+                 * Select search when searchView is opened
+                 */
+                changeSelection(SEARCH_MOVIE);
+
+                /**
+                 * clear movie list
+                 */
+                mLstMoviesRequest[mCurrentSelection] = null;
+                showMovieList();
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
 
+                /**
+                 * Restore selection when searchView is closed
+                 */
                 restoreLastSelection();
+
+                /**
+                 * Reload precious movie list selection
+                 */
                 if(mLstMoviesRequest[mCurrentSelection]!=null) showMovieList(); else onUpdateRequest();
                 return true;
             }
@@ -286,9 +309,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onQueryTextChange(String query) {
 
-                if(!query.isEmpty()) {
+                /**
+                 * Verify if text change occurs when searchView was enabled (before collapse listener)
+                 */
+                if(mCurrentSelection == SEARCH_MOVIE) {
                     mLastSearchQuery = query;
-                    changeSelection(SEARCH_MOVIE);
+                    mLstMoviesRequest[mCurrentSelection] = null;
                     onUpdateRequest();
                 }
                 return false;
@@ -375,17 +401,6 @@ public class MainActivity extends AppCompatActivity
         mDrawer.closeDrawer(GravityCompat.START);
 
         return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            //super.onBackPressed();
-        }
     }
 
     @Override
@@ -552,10 +567,10 @@ public class MainActivity extends AppCompatActivity
                 mSwipeRefresh.setRefreshing(false);
                 break;
             case SEARCH_MOVIE:
-                mActionBar.setTitle(getString(R.string.search_title) + ": \"" +mLastSearchQuery + "\"");
+                mActionBar.setTitle(getString(R.string.search_title) + ": \"" + "onUpdateRequest" + "\"");
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(MainActivity.this);
-                mRetrofitClient.searchMovieRequest(mLastSearchQuery);
+                mRetrofitClient.searchMovieRequest(mLastSearchQuery, strPage);
                 break;
         }
     }
@@ -613,10 +628,10 @@ public class MainActivity extends AppCompatActivity
                 mSwipeRefresh.setRefreshing(false);
                 break;
             case SEARCH_MOVIE:
-                mActionBar.setTitle(getString(R.string.search_title) + ": \"" +mLastSearchQuery + "\"");
+                mActionBar.setTitle(getString(R.string.search_title) + ": \"" + "onRequestMore" + "\"");
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(MainActivity.this);
-                mRetrofitClient.searchMovieRequest(mLastSearchQuery);
+                mRetrofitClient.searchMovieRequest(mLastSearchQuery, strNextPage);
                 break;
         }
     }

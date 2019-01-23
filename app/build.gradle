@@ -2,6 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'tmsearch'
+            keyPassword 'androidDeveloper'
+            storeFile file('../keystore.jks')
+            storePassword 'androidDeveloper'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.devandroid.tmsearch"
@@ -15,18 +23,18 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
     // Constraint layout
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     // parcel dependence
@@ -44,10 +52,10 @@ dependencies {
     // picasso dependence
     implementation 'com.squareup.picasso:picasso:2.5.2'
     // Room dependence
-    implementation "android.arch.persistence.room:runtime:1.1.1"
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
     // LiveData dependence
-    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
     // Firebase
     implementation 'com.google.firebase:firebase-auth:16.1.0'

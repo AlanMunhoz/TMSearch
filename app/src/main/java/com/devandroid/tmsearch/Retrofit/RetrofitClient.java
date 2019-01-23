@@ -212,7 +212,7 @@ public class RetrofitClient {
         });
     }
 
-    public void searchMovieRequest(String strQuery) {
+    public void searchMovieRequest(final String strQuery, String page) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Network.BASE_URL)
@@ -221,7 +221,7 @@ public class RetrofitClient {
 
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
-        retrofitInterface.searchMovieRequest(Network.API_KEY, strQuery).enqueue(new Callback<MoviesRequest>() {
+        retrofitInterface.searchMovieRequest(Network.API_KEY, strQuery, page).enqueue(new Callback<MoviesRequest>() {
             @Override
             public void onResponse(Call<MoviesRequest> call, Response<MoviesRequest> response) {
                 try {

@@ -19,6 +19,7 @@
 
     <string name="poster_movie_content_desc">movie poster</string>
     <string name="tmsearch_logo">logo app</string>
+    <string name="search_hint">Search</string>
 
     <!--Toolbar title-->
     <string name="most_popular_title">Most Popular</string>
