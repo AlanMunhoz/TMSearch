@@ -220,7 +220,7 @@
         app:backgroundTint="@color/clSelectedBackground"
         app:elevation="@dimen/elevation_fab"
         app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="right|bottom" />
+        app:layout_anchorGravity="end|bottom" />
         <!--android:background="@drawable/add_fab_background"-->
         <!--android:stateListAnimator="@anim/fab_state_list_anim"/>-->
 

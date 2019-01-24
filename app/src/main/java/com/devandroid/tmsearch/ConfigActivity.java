@@ -1,5 +1,6 @@
 package com.devandroid.tmsearch;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -55,7 +56,12 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
 
 
         final Toolbar toolbar = findViewById(R.id.Toolbar);
-        toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_white_24);
+        Configuration config = getResources().getConfiguration();
+        if(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+            toolbar.setNavigationIcon(R.drawable.baseline_arrow_forward_white_24);
+        } else {
+            toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_white_24);
+        }
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.ActivityConfig_toolbarTitle));

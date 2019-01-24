@@ -3,6 +3,7 @@ package com.devandroid.tmsearch;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -151,7 +152,12 @@ public class DetailActivity extends AppCompatActivity
          * Setup Toolbar and Collapsing toolbar
          */
         final Toolbar toolbar = findViewById(R.id.Toolbar);
-        toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_white_24);
+        Configuration config = getResources().getConfiguration();
+        if(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+            toolbar.setNavigationIcon(R.drawable.baseline_arrow_forward_white_24);
+        } else {
+            toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_white_24);
+        }
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapse_toolbar);

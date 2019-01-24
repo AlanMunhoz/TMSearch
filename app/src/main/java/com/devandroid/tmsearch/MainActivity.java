@@ -727,7 +727,7 @@ public class MainActivity extends AppCompatActivity
         ArrayList<String> lstMovies = new ArrayList<>();
         for(int i=0; i<10; i++) {
             Movie movie = mLstMoviesRequest[mCurrentSelection].getmMovies().get(i);
-            String strLine = "Score: " + movie.mStrPopularity + " " + "Title: " + movie.getmStrTitle();
+            String strLine = getString(R.string.appwidget_popularity) + movie.mStrPopularity + " " + getString(R.string.appwidget_title) + movie.getmStrTitle();
             lstMovies.add(strLine);
         }
         Preferences.saveStringList(this, lstMovies);

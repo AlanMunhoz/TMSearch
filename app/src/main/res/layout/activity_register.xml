@@ -16,8 +16,8 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:tint="@color/clSelectedBackground"
             android:contentDescription="@string/ActivityRegister_back_content_description"
+            android:tint="@color/clSelectedBackground"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
             map:srcCompat="@drawable/baseline_arrow_back_white_24" />

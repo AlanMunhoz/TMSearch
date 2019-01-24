@@ -1,5 +1,6 @@
 package com.devandroid.tmsearch;
 
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -39,6 +40,11 @@ public class RegisterActivity extends AppCompatActivity implements FirebaseCallb
         mEtEmailFieldInput = findViewById(R.id.etEmailFieldInput);
         mEtPasswordFieldInput = findViewById(R.id.etPasswordFieldInput);
         mBtnRegister = findViewById(R.id.btnRegister);
+
+        Configuration config = getResources().getConfiguration();
+        if(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+            mIvBack.setRotation(180f);
+        }
 
         /**
          * subscribe firebase auth listener

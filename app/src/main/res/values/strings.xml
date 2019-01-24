@@ -63,6 +63,8 @@
     <!--Widget-->
     <string name="appwidget_content_description">TMSearch Top 10 Popular Movies</string>
     <string name="appwidget_text">Top 10 Popular Movies</string>
+    <string name="appwidget_popularity">Popularity:\ </string>
+    <string name="appwidget_title">Title:\ </string>
 
     <!--AlertDialog-->
     <string name="alert_api_key_title">Api key not found</string>
