@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity
     private int mCurrentSelection = MOST_POPULAR;
     private ArrayList<Movie> mLstFavoriteMovies;
     private MoviesRequest[] mLstMoviesRequest = new MoviesRequest[6];
+    private boolean mEndListReached = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -409,6 +410,13 @@ public class MainActivity extends AppCompatActivity
         mSwipeRefresh.setRefreshing(false);
 
         /**
+         * The search returned 0 elements, don't get any more
+         */
+        if(moviesRequest.getmMovies().size() == 0) {
+            mEndListReached = true;
+        }
+
+        /**
          * Write list
          */
         ArrayList<Movie> lstMovie = new ArrayList<>();
@@ -520,6 +528,8 @@ public class MainActivity extends AppCompatActivity
 
     private void onUpdateRequest() {
 
+        mEndListReached = false;
+
         /**
          * Favorites doesn't need to do any request
          */
@@ -576,6 +586,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onRequestMore() {
+
+        /**
+         * The search returned 0 elements, don't get any more
+         */
+        if(mEndListReached) {
+            return;
+        }
 
         /**
          * Favorites doesn't need to do any request
