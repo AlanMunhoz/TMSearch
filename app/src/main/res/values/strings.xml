@@ -75,4 +75,11 @@
     <string name="exit_confirmation_pos">Yes</string>
     <string name="exit_confirmation_neg">No</string>
 
+    <!--BroadcastReceiver-->
+    <string name="bc_receiver_no_connectivity">noConnectivity=true</string>
+
+    <!--Errors messages-->
+    <string name="no_internet_snackbar">No internet connection…</string>
+    <string name="no_internet_toast">No internet connection. Make sure Wi-Fi or cellular data is turned on, then try again.</string>
+
 </resources>

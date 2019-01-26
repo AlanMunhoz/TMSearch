@@ -16,7 +16,8 @@ import com.devandroid.tmsearch.Util.Utils;
 
 
 
-public class LoginActivity extends AppCompatActivity implements FirebaseCallback {
+public class LoginActivity extends ParentActivity
+        implements FirebaseCallback {
 
     /**
      * Constants
@@ -128,6 +129,12 @@ public class LoginActivity extends AppCompatActivity implements FirebaseCallback
 
 
     private void startSignIn() {
+
+        if(!mConnectionUp) {
+
+            showToast(getString(R.string.no_internet_toast));
+            return;
+        }
 
         String strEmail = mEtEmailFieldInput.getText().toString();
         String strPassword = mEtPasswordFieldInput.getText().toString();

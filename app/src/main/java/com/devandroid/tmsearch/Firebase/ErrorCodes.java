@@ -32,6 +32,6 @@ public final class ErrorCodes {
      */
     public static String ProgressBarAnimationSignInUser = "Login in your account...";
     public static String ProgressBarAnimationCreatingUser = "Creating user...";
-    public static String ProgressBarAnimationChangingConfigs = "Changing configuraations...";
+    public static String ProgressBarAnimationChangingConfigs = "Changing configurations...";
 
 }

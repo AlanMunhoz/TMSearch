@@ -5,7 +5,7 @@ public final class Network {
     /**
      * The Movie Db Api Key
      */
-    public static String API_KEY;
+    public static String API_KEY = "";
 
     /**
      * The Movie Db Retrofit Request Urls

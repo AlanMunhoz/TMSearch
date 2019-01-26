@@ -17,7 +17,8 @@ import com.devandroid.tmsearch.Firebase.FirebaseCallback;
 import com.devandroid.tmsearch.Network.Network;
 import com.devandroid.tmsearch.Util.Utils;
 
-public class ConfigActivity extends AppCompatActivity implements FirebaseCallback {
+public class ConfigActivity extends ParentActivity
+        implements FirebaseCallback {
 
     /**
      * Constants
@@ -176,6 +177,12 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
 
     private void changeApiKey() {
 
+        if(!mConnectionUp) {
+
+            showToast(getString(R.string.no_internet_toast));
+            return;
+        }
+
         /**
          * store the ApiKey in Firebase database
          */
@@ -187,12 +194,24 @@ public class ConfigActivity extends AppCompatActivity implements FirebaseCallbac
 
     private void changeName() {
 
+        if(!mConnectionUp) {
+
+            showToast(getString(R.string.no_internet_toast));
+            return;
+        }
+
         String name = mEtNameFieldInput.getText().toString();
         FirebaseManager.FirebaseAuthChangeName(name);
         Toast.makeText(ConfigActivity.this, "Config Successful", Toast.LENGTH_SHORT).show();
     }
 
     private void changeEmail() {
+
+        if(!mConnectionUp) {
+
+            showToast(getString(R.string.no_internet_toast));
+            return;
+        }
 
         String email = mEtEmailFieldInput.getText().toString();
         String oldPass = mEtOldPasswordFieldInput.getText().toString();

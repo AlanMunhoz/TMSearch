@@ -14,7 +14,8 @@ import com.devandroid.tmsearch.Firebase.FirebaseManager;
 import com.devandroid.tmsearch.Firebase.FirebaseCallback;
 import com.devandroid.tmsearch.Util.Utils;
 
-public class RegisterActivity extends AppCompatActivity implements FirebaseCallback {
+public class RegisterActivity extends ParentActivity
+        implements FirebaseCallback {
 
     /**
      * Constants
@@ -115,6 +116,12 @@ public class RegisterActivity extends AppCompatActivity implements FirebaseCallb
     public void mListenerDatabaseGetApiKey(String key) {}
 
     private void startRegister() {
+
+        if(!mConnectionUp) {
+
+            showToast(getString(R.string.no_internet_toast));
+            return;
+        }
 
         String strName = mEtNameFieldInput.getText().toString();
         String strEmail = mEtEmailFieldInput.getText().toString();

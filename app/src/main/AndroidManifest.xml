@@ -4,6 +4,8 @@
     package="com.devandroid.tmsearch">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -44,6 +46,9 @@
         <service
             android:name=".widget.ListWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver android:name=".Network.MyBroadcastReceiver" android:exported="true">
+        </receiver>
 
     </application>
 

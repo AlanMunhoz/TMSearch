@@ -14,7 +14,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +26,6 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 
 import com.devandroid.tmsearch.Firebase.FirebaseManager;
 import com.devandroid.tmsearch.Firebase.FirebaseCallback;
@@ -48,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends ParentActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         RetrofitClient.listReceivedListenter,
         MovieAdapter.ListItemClickListener,
@@ -510,6 +508,11 @@ public class MainActivity extends AppCompatActivity
     public void mListenerDatabaseGetApiKey(String key) {
 
         /**
+         * In case of refresh list before api restoration by firebase database
+         */
+        Utils.AlertDialogDismiss();
+
+        /**
          * restore the api key
          */
         Network.setApiKey(key);
@@ -529,6 +532,13 @@ public class MainActivity extends AppCompatActivity
     private void onUpdateRequest() {
 
         mEndListReached = false;
+
+        if(!mConnectionUp) {
+
+            mSwipeRefresh.setRefreshing(false);
+            showToast(getString(R.string.no_internet_toast));
+            return;
+        }
 
         /**
          * Favorites doesn't need to do any request
@@ -577,7 +587,6 @@ public class MainActivity extends AppCompatActivity
                 mSwipeRefresh.setRefreshing(false);
                 break;
             case SEARCH_MOVIE:
-                mActionBar.setTitle(getString(R.string.search_title) + ": \"" + "onUpdateRequest" + "\"");
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(MainActivity.this);
                 mRetrofitClient.searchMovieRequest(mLastSearchQuery, strPage);
@@ -645,7 +654,6 @@ public class MainActivity extends AppCompatActivity
                 mSwipeRefresh.setRefreshing(false);
                 break;
             case SEARCH_MOVIE:
-                mActionBar.setTitle(getString(R.string.search_title) + ": \"" + "onRequestMore" + "\"");
                 mSwipeRefresh.setRefreshing(true);
                 mRetrofitClient = new RetrofitClient(MainActivity.this);
                 mRetrofitClient.searchMovieRequest(mLastSearchQuery, strNextPage);
@@ -691,7 +699,6 @@ public class MainActivity extends AppCompatActivity
                 lstMovie = mLstFavoriteMovies!=null ? mLstFavoriteMovies : new ArrayList<Movie>();
                 break;
             case SEARCH_MOVIE:
-                mActionBar.setTitle(getString(R.string.search_title) + ": \"" +mLastSearchQuery + "\"");
                 lstMovie = mLstMoviesRequest[mCurrentSelection]!=null ? mLstMoviesRequest[mCurrentSelection].getmMovies() : new ArrayList<Movie>();
                 break;
         }
