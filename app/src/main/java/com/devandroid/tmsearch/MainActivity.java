@@ -529,6 +529,18 @@ public class MainActivity extends ParentActivity
 
     }
 
+    @Override
+    public void onChangeConnectivity(boolean state) {
+        super.onChangeConnectivity(state);
+
+        /**
+         * reload data when connection is up again
+         */
+        if(mConnectionUp) {
+            onUpdateRequest();
+        }
+    }
+
     private void onUpdateRequest() {
 
         mEndListReached = false;
@@ -536,6 +548,7 @@ public class MainActivity extends ParentActivity
         if(!mConnectionUp) {
 
             mSwipeRefresh.setRefreshing(false);
+            showMovieList();
             showToast(getString(R.string.no_internet_toast));
             return;
         }
@@ -600,6 +613,14 @@ public class MainActivity extends ParentActivity
          * The search returned 0 elements, don't get any more
          */
         if(mEndListReached) {
+            return;
+        }
+
+        if(!mConnectionUp) {
+
+            mSwipeRefresh.setRefreshing(false);
+            showMovieList();
+            showToast(getString(R.string.no_internet_toast));
             return;
         }
 
