@@ -82,4 +82,29 @@
     <string name="no_internet_snackbar">No internet connection…</string>
     <string name="no_internet_toast">No internet connection. Make sure Wi-Fi or cellular data is turned on, then try again.</string>
 
+    <!--Firebase Auth Errors-->
+    <string name="FirebaseAuthInvalidCredentialsException">Não foi possível conectar ao servidor com este email ou senha, por favor verifique suas credenciais e tente novamente.</string>
+    <string name="FirebaseAuthInvalidUserException">Endereço de email não cadastrado, por favor verifique seu email e tente novamente.</string>
+    <string name="FirebaseAuthGenericError">Erro ao logar usuário.</string>
+    <string name="FirebaseAuthReauthenticateGenericError">Erro ao autenticar usuário, por favor verifique sua conexão com a internet e tente novamente.</string>
+    <string name="FirebaseAuthWeakPasswordException">A senha deve conter ao menos 6 caracteres, por favor tente novamente.</string>
+    <string name="FirebaseAuthInvalidCredentialsExceptionCreateUsers">Endereço de email mal formatado, por favor verifique seu email e tente novamente.</string>
+    <string name="FirebaseAuthUserCollisionException">Endereço de email já existente, por favor digite outro email.</string>
+    <string name="FirebaseAuthGenericErrorCreateUser">Erro ao criar usuário.</string>
+    <string name="FirebaseNetworkException">Erro ao conectar com servidor, por favor verifique sua conexão com a internet e tente novamente.</string>
+    <string name="FirebaseAuthChangeEmailError">Não foi possível alterar o email.</string>
+    <string name="FirebaseAuthChangePasswordError">Não foi possível alterar a senha.</string>
+    <string name="FirebaseDbSetApiKeyError">Não foi possível persistir a chave da API.</string>
+
+    <!--Form Errors-->
+    <string name="EmailFieldEmptyError">Email required.</string>
+    <string name="EmailFieldMalFormedError">Email bad format.</string>
+    <string name="PasswordFieldEmptyError">Password required.</string>
+    <string name="NameFieldEmptyError">Name required.</string>
+
+    <!--ProgressBar Messages-->
+    <string name="ProgressBarAnimationSignInUser">Login in your account...</string>
+    <string name="ProgressBarAnimationCreatingUser">Creating user...</string>
+    <string name="ProgressBarAnimationChangingConfigs">Changing configurations...</string>
+
 </resources>

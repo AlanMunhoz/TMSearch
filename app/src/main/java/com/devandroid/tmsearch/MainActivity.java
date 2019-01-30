@@ -181,6 +181,7 @@ public class MainActivity extends ParentActivity
             if(mCurrentSelection==SEARCH_MOVIE) {
                 mCurrentSelection = mLastSelection;
                 mLstMoviesRequest = new MoviesRequest[6];
+                Log.d(LOG_TAG, "onSaveInstance" + Network.API_KEY);
                 onUpdateRequest();
             }
 
@@ -293,6 +294,7 @@ public class MainActivity extends ParentActivity
                 /**
                  * Reload precious movie list selection
                  */
+                Log.d(LOG_TAG, "onMenuItemActionCollapse" + Network.API_KEY);
                 if(mLstMoviesRequest[mCurrentSelection]!=null) showMovieList(); else onUpdateRequest();
                 return true;
             }
@@ -314,6 +316,7 @@ public class MainActivity extends ParentActivity
                 if(mCurrentSelection == SEARCH_MOVIE) {
                     mLastSearchQuery = query;
                     mLstMoviesRequest[mCurrentSelection] = null;
+                    Log.d(LOG_TAG, "onQueryTextChange" + Network.API_KEY);
                     onUpdateRequest();
                 }
                 return false;
@@ -335,6 +338,8 @@ public class MainActivity extends ParentActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
+
+        Log.d(LOG_TAG, "onNavigateItemSelected" + Network.API_KEY);
 
         switch (id) {
 
@@ -477,6 +482,7 @@ public class MainActivity extends ParentActivity
     @Override
     public void onRefresh() {
 
+        Log.d(LOG_TAG, "onRefresh" + Network.API_KEY);
         onUpdateRequest();
     }
 
@@ -525,18 +531,23 @@ public class MainActivity extends ParentActivity
         /**
          * request movies
          */
+        Log.d(LOG_TAG, "mListenerDatabaseGetApiKey" + Network.API_KEY);
         onUpdateRequest();
 
     }
 
     @Override
     public void onChangeConnectivity(boolean state) {
+        boolean lastState = mConnectionUp;
         super.onChangeConnectivity(state);
 
         /**
          * reload data when connection is up again
          */
-        if(mConnectionUp) {
+        if(lastState!=mConnectionUp &&
+                Network.API_KEY!=null &&
+                mConnectionUp) {
+            Log.d(LOG_TAG, "onChangeConnectivity" + Network.API_KEY);
             onUpdateRequest();
         }
     }
@@ -619,7 +630,6 @@ public class MainActivity extends ParentActivity
         if(!mConnectionUp) {
 
             mSwipeRefresh.setRefreshing(false);
-            showMovieList();
             showToast(getString(R.string.no_internet_toast));
             return;
         }

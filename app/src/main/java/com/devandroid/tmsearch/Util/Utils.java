@@ -3,20 +3,27 @@ package com.devandroid.tmsearch.Util;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
-import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ListView;
 
-import com.devandroid.tmsearch.Firebase.ErrorCodes;
+import com.devandroid.tmsearch.R;
 
 public class Utils {
 
+    private static Context mContext;
     private static ProgressDialog progressDialog;
     private static AlertDialog alertDialog;
+
+    public static void init(Context context) {
+
+        mContext = context;
+    }
 
     /**
      * Check Email and Password in a EditText Field. Set error message in case of bad formatter.
@@ -25,14 +32,14 @@ public class Utils {
     {
         boolean ok = true;
         if (TextUtils.isEmpty(email)) {
-            editTextEmail.setError(ErrorCodes.EmailFieldEmptyError);
+            editTextEmail.setError( mContext.getString(R.string.EmailFieldEmptyError));
             ok=false;
         }else if(!email.contains("@")) {
-            editTextEmail.setError(ErrorCodes.EmailFieldMalFormedError);
+            editTextEmail.setError(mContext.getString(R.string.EmailFieldMalFormedError));
             ok=false;
         }
         if (TextUtils.isEmpty(password)) {
-            editTextPassword.setError(ErrorCodes.PasswordFieldEmptyError);
+            editTextPassword.setError(mContext.getString(R.string.PasswordFieldEmptyError));
             ok=false;
         }
         return ok;
@@ -42,18 +49,18 @@ public class Utils {
     {
         boolean ok = true;
         if (TextUtils.isEmpty(email)) {
-            editTextEmail.setError(ErrorCodes.EmailFieldEmptyError);
+            editTextEmail.setError(mContext.getString(R.string.EmailFieldEmptyError));
             ok=false;
         }else if(!email.contains("@")) {
-            editTextEmail.setError(ErrorCodes.EmailFieldMalFormedError);
+            editTextEmail.setError(mContext.getString(R.string.EmailFieldMalFormedError));
             ok=false;
         }
         if (TextUtils.isEmpty(oldPassword)) {
-            editTextOldPassword.setError(ErrorCodes.PasswordFieldEmptyError);
+            editTextOldPassword.setError(mContext.getString(R.string.PasswordFieldEmptyError));
             ok=false;
         }
         if (TextUtils.isEmpty(newPassword)) {
-            editTextNewPassword.setError(ErrorCodes.PasswordFieldEmptyError);
+            editTextNewPassword.setError(mContext.getString(R.string.PasswordFieldEmptyError));
             ok=false;
         }
         return ok;
@@ -66,7 +73,7 @@ public class Utils {
     {
         boolean ok = true;
         if(TextUtils.isEmpty(name)) {
-            editTextName.setError(ErrorCodes.NameFieldEmptyError);
+            editTextName.setError(mContext.getString(R.string.NameFieldEmptyError));
             ok=false;
         }
         if (!checkFormEmailPassword(email, editTextEmail, password, editTextPassword)) {
@@ -138,4 +145,9 @@ public class Utils {
         activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
+    public static boolean isOnline(Context context) {
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
 }

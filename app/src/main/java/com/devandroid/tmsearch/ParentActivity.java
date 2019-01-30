@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.devandroid.tmsearch.Network.BroadcastReceiverInterface;
 import com.devandroid.tmsearch.Network.MyBroadcastReceiver;
+import com.devandroid.tmsearch.Util.Utils;
 
 public class ParentActivity extends AppCompatActivity
         implements BroadcastReceiverInterface {
@@ -43,6 +44,10 @@ public class ParentActivity extends AppCompatActivity
 
         mSnackbar = Snackbar.make(findViewById(R.id.parent_view), "", Snackbar.LENGTH_INDEFINITE);
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+
+        mConnectionUp = Utils.isOnline(this);
+        manageSnackbar();
+
     }
 
     @Override

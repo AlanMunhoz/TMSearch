@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.devandroid.tmsearch.Firebase.ErrorCodes;
 import com.devandroid.tmsearch.Firebase.FirebaseManager;
 import com.devandroid.tmsearch.Firebase.FirebaseCallback;
 import com.devandroid.tmsearch.Util.Utils;
@@ -139,7 +138,7 @@ public class LoginActivity extends ParentActivity
         String strEmail = mEtEmailFieldInput.getText().toString();
         String strPassword = mEtPasswordFieldInput.getText().toString();
         if(Utils.checkFormEmailPassword(strEmail, mEtEmailFieldInput, strPassword, mEtPasswordFieldInput)) {
-            Utils.ProgressDialogStart(LoginActivity.this, ErrorCodes.ProgressBarAnimationSignInUser);
+            Utils.ProgressDialogStart(LoginActivity.this,  getString(R.string.ProgressBarAnimationSignInUser));
             FirebaseManager.FirebaseAuthStartSignIn(LoginActivity.this, strEmail, strPassword);
         }
     }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
+import com.devandroid.tmsearch.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
@@ -31,6 +32,8 @@ import java.util.List;
 
 
 public final class FirebaseManager {
+
+    private static Context mContext;
 
     private static FirebaseAuth mAuth;
 
@@ -63,6 +66,11 @@ public final class FirebaseManager {
             mName = name;
             mContentType = contentType;
         }
+    }
+
+    public static void init(Context context) {
+
+        mContext = context;
     }
 
     /**
@@ -177,13 +185,13 @@ public final class FirebaseManager {
                         try {
                             throw task.getException();
                         } catch (FirebaseAuthInvalidCredentialsException e) {
-                            erroExcecao = ErrorCodes.FirebaseAuthInvalidCredentialsException;
+                            erroExcecao = mContext.getString(R.string.FirebaseAuthInvalidCredentialsException);
                         } catch (FirebaseAuthInvalidUserException e) {
-                            erroExcecao = ErrorCodes.FirebaseAuthInvalidUserException;
+                            erroExcecao =  mContext.getString(R.string.FirebaseAuthInvalidUserException);
                         } catch (FirebaseNetworkException e) {
-                            erroExcecao = ErrorCodes.FirebaseNetworkException;
+                            erroExcecao =  mContext.getString(R.string.FirebaseNetworkException);
                         } catch (Exception e) {
-                            erroExcecao = ErrorCodes.FirebaseAuthGenericError /*+ e.getMessage()*/;
+                            erroExcecao =  mContext.getString(R.string.FirebaseAuthGenericError) /*+ e.getMessage()*/;
                             e.printStackTrace();
                         }
                         for (FirebaseCallback events : firebaseCallbacks) events.mListenerSignInFail(erroExcecao);
@@ -224,15 +232,15 @@ public final class FirebaseManager {
                         try{
                             throw task.getException();
                         } catch (FirebaseAuthWeakPasswordException e) {
-                            erroExcecao = ErrorCodes.FirebaseAuthWeakPasswordException;
+                            erroExcecao =  mContext.getString(R.string.FirebaseAuthWeakPasswordException);
                         } catch (FirebaseAuthInvalidCredentialsException e) {
-                            erroExcecao = ErrorCodes.FirebaseAuthInvalidCredentialsExceptionCreateUsers;
+                            erroExcecao = mContext.getString(R.string.FirebaseAuthInvalidCredentialsException);
                         } catch ( FirebaseAuthUserCollisionException e){
-                            erroExcecao = ErrorCodes.FirebaseAuthUserCollisionException;
+                            erroExcecao =  mContext.getString(R.string.FirebaseAuthUserCollisionException);
                         } catch (FirebaseNetworkException e) {
-                            erroExcecao = ErrorCodes.FirebaseNetworkException;
+                            erroExcecao =  mContext.getString(R.string.FirebaseNetworkException);
                         } catch ( Exception e) {
-                            erroExcecao = ErrorCodes.FirebaseAuthGenericErrorCreateUser /*+ e.getMessage()*/;
+                            erroExcecao =  mContext.getString(R.string.FirebaseAuthGenericErrorCreateUser) /*+ e.getMessage()*/;
                             e.printStackTrace();
                         }
                         for (FirebaseCallback events : firebaseCallbacks) events.mListenerRegisterFail(erroExcecao);
@@ -285,21 +293,21 @@ public final class FirebaseManager {
                                         if(task.isSuccessful()){
                                             for (FirebaseCallback events : firebaseCallbacks) events.mListenerChangeCredentialsSuccessful();
                                         }else {
-                                            for (FirebaseCallback events : firebaseCallbacks) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangePasswordError);
+                                            for (FirebaseCallback events : firebaseCallbacks) events.mListenerChangeCredentialsFail( mContext.getString(R.string.FirebaseAuthChangePasswordError));
                                         }
                                     }
                                 });
                             }else {
-                                for (FirebaseCallback events : firebaseCallbacks) events.mListenerChangeCredentialsFail(ErrorCodes.FirebaseAuthChangeEmailError);
+                                for (FirebaseCallback events : firebaseCallbacks) events.mListenerChangeCredentialsFail( mContext.getString(R.string.FirebaseAuthChangeEmailError));
                             }
                         }
                     });
                 } else {
-                    String erroExcecao = ErrorCodes.FirebaseAuthReauthenticateGenericError;
+                    String erroExcecao =  mContext.getString(R.string.FirebaseAuthReauthenticateGenericError);
                     try {
                         throw task.getException();
                     } catch (Exception e) {
-                        erroExcecao = ErrorCodes.FirebaseAuthReauthenticateGenericError + e.getMessage();
+                        erroExcecao =  mContext.getString(R.string.FirebaseAuthReauthenticateGenericError) + e.getMessage();
                         e.printStackTrace();
                     }
                     for (FirebaseCallback events : firebaseCallbacks) events.mListenerSignInFail(erroExcecao);
@@ -364,11 +372,11 @@ public final class FirebaseManager {
                         for (FirebaseCallback events : firebaseCallbacks) events.mListenerDatabaseSetApiKeySuccessful();
                     }
                     else {
-                        String erroExcecao = ErrorCodes.FirebaseDbSetApiKeyError;
+                        String erroExcecao =  mContext.getString(R.string.FirebaseDbSetApiKeyError);
                         try {
                             throw task.getException();
                         } catch (Exception e) {
-                            erroExcecao = ErrorCodes.FirebaseDbSetApiKeyError + e.getMessage();
+                            erroExcecao =  mContext.getString(R.string.FirebaseDbSetApiKeyError) + e.getMessage();
                             e.printStackTrace();
                         }
                         for (FirebaseCallback events : firebaseCallbacks) events.mListenerDatabaseSetApiKeyFail(erroExcecao);
