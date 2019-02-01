@@ -1,5 +1,6 @@
 package com.devandroid.tmsearch;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -15,6 +16,8 @@ import com.devandroid.tmsearch.Firebase.FirebaseManager;
 import com.devandroid.tmsearch.Firebase.FirebaseCallback;
 import com.devandroid.tmsearch.Network.Network;
 import com.devandroid.tmsearch.Util.Utils;
+
+import java.lang.ref.WeakReference;
 
 public class ConfigActivity extends ParentActivity
         implements FirebaseCallback {
@@ -186,7 +189,7 @@ public class ConfigActivity extends ParentActivity
          * store the ApiKey in Firebase database
          */
         String strApiKey = mEtTmdbApiKeyFieldInput.getText().toString();
-        Utils.ProgressDialogStart(ConfigActivity.this,  getString(R.string.ProgressBarAnimationChangingConfigs));
+        Utils.ProgressDialogStart(new WeakReference<Activity>(this),  getString(R.string.ProgressBarAnimationChangingConfigs));
         FirebaseManager.FirebaseDatabaseSetApiKey(ConfigActivity.this, strApiKey);
 
     }
@@ -221,7 +224,7 @@ public class ConfigActivity extends ParentActivity
             mTilNewPassword.setVisibility(View.VISIBLE);
         } else {
             if(Utils.checkFormEmailOldNewPassword(email, mEtEmailFieldInput, oldPass, mEtOldPasswordFieldInput, newPass, mEtNewPasswordFieldInput)) {
-                Utils.ProgressDialogStart(ConfigActivity.this,  getString(R.string.ProgressBarAnimationChangingConfigs));
+                Utils.ProgressDialogStart(new WeakReference<Activity>(this),  getString(R.string.ProgressBarAnimationChangingConfigs));
                 FirebaseManager.FirebaseAuthChangeUser(ConfigActivity.this, email, oldPass, newPass);
             }
         }

@@ -1,5 +1,6 @@
 package com.devandroid.tmsearch;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -32,10 +33,12 @@ import com.devandroid.tmsearch.Util.AppExecutors;
 import com.devandroid.tmsearch.RoomDatabase.AppDatabase;
 import com.devandroid.tmsearch.RoomDatabase.DetailsViewModel;
 import com.devandroid.tmsearch.RoomDatabase.DetailsViewModelFactory;
+import com.devandroid.tmsearch.Util.Utils;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,7 +171,7 @@ public class DetailActivity extends ParentActivity
          */
         collapsingToolbarLayout.setExpandedTitleColor(getColor(R.color.clLightTextColor));
         collapsingToolbarLayout.setCollapsedTitleTextColor(getColor(R.color.clLightTextColor));
-        collapsingToolbarLayout.setContentScrimColor(getColor(R.color.clSelectedBackground));
+        //collapsingToolbarLayout.setContentScrimColor(getColor(R.color.clSelectedBackground));
 
         mFavoriteFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,6 +245,13 @@ public class DetailActivity extends ParentActivity
     @Override
     public void loadFailure() {
 
+        Utils.AlertDialogStart(new WeakReference<Activity>(this),
+                getString(R.string.alert_retrofit_fail_title),
+                getString(R.string.alert_retrofit_fail_message),
+                getString(R.string.alert_retrofit_fail_pos),
+                null,
+                "",
+                null);
     }
 
     private void showVideosList() {

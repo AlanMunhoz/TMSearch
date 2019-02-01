@@ -14,6 +14,8 @@ import android.widget.EditText;
 
 import com.devandroid.tmsearch.R;
 
+import java.lang.ref.WeakReference;
+
 public class Utils {
 
     private static Context mContext;
@@ -85,9 +87,9 @@ public class Utils {
     /**
      * Start a Progress Dialog
      */
-    public static void ProgressDialogStart(Activity activity, String message){
+    public static void ProgressDialogStart(WeakReference<Activity> activity, String message){
         //exibe progress bar
-        progressDialog = new ProgressDialog( activity );
+        progressDialog = new ProgressDialog( activity.get() );
         progressDialog.setTitle(message);
         progressDialog.setCancelable(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -107,9 +109,16 @@ public class Utils {
     /**
      * Start a AlertDialog
      */
-    public static void AlertDialogStart(Activity activity, String strTitle, String strMessage, String strPositive, DialogInterface.OnClickListener posListener, String strNegative, DialogInterface.OnClickListener negListener){
+    public static void AlertDialogStart(WeakReference<Activity> activity, String strTitle, String strMessage, String strPositive, DialogInterface.OnClickListener posListener, String strNegative, DialogInterface.OnClickListener negListener){
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        /**
+         *
+         */
+        if((alertDialog!=null && alertDialog.isShowing()) || activity.get()==null || activity.get().isFinishing()) {
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity.get());
         builder.setTitle(strTitle);
         builder.setMessage(strMessage);
         builder.setPositiveButton(strPositive, posListener);

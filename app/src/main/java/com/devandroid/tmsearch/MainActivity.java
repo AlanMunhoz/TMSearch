@@ -1,5 +1,6 @@
 package com.devandroid.tmsearch;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -42,6 +43,7 @@ import com.devandroid.tmsearch.widget.WidgetService;
 
 import org.parceler.Parcels;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -220,6 +222,7 @@ public class MainActivity extends ParentActivity
          */
         FirebaseManager.removeListener(MainActivity.this);
         Utils.AlertDialogDismiss();
+
     }
 
     @Override
@@ -341,6 +344,13 @@ public class MainActivity extends ParentActivity
 
         Log.d(LOG_TAG, "onNavigateItemSelected" + Network.API_KEY);
 
+        if(id!=R.id.nav_config && id!=R.id.nav_exit) {
+            /**
+             * clear list before load another search results
+             */
+            mAdapter.setListAdapter(new ArrayList<Movie>());
+        }
+
         switch (id) {
 
             case R.id.nav_most_popular:
@@ -380,7 +390,7 @@ public class MainActivity extends ParentActivity
 
             case R.id.nav_exit:
 
-                Utils.AlertDialogStart(MainActivity.this,
+                Utils.AlertDialogStart(new WeakReference<Activity>(this),
                         getString(R.string.exit_confirmation_title),
                         getString(R.string.exit_confirmation_message),
                         getString(R.string.exit_confirmation_pos),
@@ -455,6 +465,14 @@ public class MainActivity extends ParentActivity
     public void loadFailure() {
 
         mSwipeRefresh.setRefreshing(false);
+
+        Utils.AlertDialogStart(new WeakReference<Activity>(this),
+                getString(R.string.alert_retrofit_fail_title),
+                getString(R.string.alert_retrofit_fail_message),
+                getString(R.string.alert_retrofit_fail_pos),
+                null,
+                "",
+                null);
     }
 
     @Override
@@ -568,14 +586,17 @@ public class MainActivity extends ParentActivity
          * Favorites doesn't need to do any request
          */
         if(mCurrentSelection!=FAVORITES) {
-            if (Network.API_KEY.equals("")) {
-                Utils.AlertDialogStart(this,
+            if (Network.API_KEY==null || Network.API_KEY.equals("")) {
+                showMovieList();
+                mSwipeRefresh.setRefreshing(false);
+                Utils.AlertDialogStart(new WeakReference<Activity>(this),
                         getString(R.string.alert_api_key_title),
                         getString(R.string.alert_api_key_message),
                         getString(R.string.alert_api_key_btn_pos),
                         null,
                         "",
                         null);
+                return;
             }
         }
 
@@ -620,6 +641,8 @@ public class MainActivity extends ParentActivity
 
     private void onRequestMore() {
 
+        String strNextPage = "1";
+
         /**
          * The search returned 0 elements, don't get any more
          */
@@ -638,24 +661,22 @@ public class MainActivity extends ParentActivity
          * Favorites doesn't need to do any request
          */
         if(mCurrentSelection!=FAVORITES) {
-            if (Network.API_KEY.equals("")) {
-                Utils.AlertDialogStart(this,
+            if (Network.API_KEY==null || Network.API_KEY.equals("")) {
+                showMovieList();
+                mSwipeRefresh.setRefreshing(false);
+                Utils.AlertDialogStart(new WeakReference<Activity>(this),
                         getString(R.string.alert_api_key_title),
                         getString(R.string.alert_api_key_message),
                         getString(R.string.alert_api_key_btn_pos),
                         null,
                         "",
                         null);
+                return;
+            }
+            if(mLstMoviesRequest[mCurrentSelection]!=null) {
+                strNextPage = Integer.toString(Integer.parseInt(mLstMoviesRequest[mCurrentSelection].mStrPage) + 1);
             }
         }
-
-        if(mCurrentSelection==FAVORITES) {
-            mSwipeRefresh.setRefreshing(false);
-            return;
-        }
-
-
-        String strNextPage = Integer.toString(Integer.parseInt(mLstMoviesRequest[mCurrentSelection].mStrPage) + 1);
 
         switch (mCurrentSelection) {
 
@@ -681,7 +702,6 @@ public class MainActivity extends ParentActivity
                 break;
             case FAVORITES:
                 mActionBar.setTitle(getString(R.string.favorites_title));
-                showMovieList();
                 mSwipeRefresh.setRefreshing(false);
                 break;
             case SEARCH_MOVIE:

@@ -1,5 +1,6 @@
 package com.devandroid.tmsearch;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 import com.devandroid.tmsearch.Firebase.FirebaseManager;
 import com.devandroid.tmsearch.Firebase.FirebaseCallback;
 import com.devandroid.tmsearch.Util.Utils;
+
+import java.lang.ref.WeakReference;
 
 public class RegisterActivity extends ParentActivity
         implements FirebaseCallback {
@@ -127,7 +130,7 @@ public class RegisterActivity extends ParentActivity
         String strPassword = mEtPasswordFieldInput.getText().toString();
         if(Utils.checkFormNameEmailPassword(strName, mEtNameFieldInput, strEmail, mEtEmailFieldInput, strPassword, mEtPasswordFieldInput))
         {
-            Utils.ProgressDialogStart(RegisterActivity.this, getString(R.string.ProgressBarAnimationCreatingUser));
+            Utils.ProgressDialogStart(new WeakReference<Activity>(this), getString(R.string.ProgressBarAnimationCreatingUser));
             FirebaseManager.FirebaseAuthStartRegister(RegisterActivity.this, strName, strEmail, strPassword);
         }
     }
